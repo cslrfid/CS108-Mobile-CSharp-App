@@ -1,0 +1,169 @@
+2.0.10-146 Change History
+---------------------
+1. Fix default Target A can not set to reader.  
+2. Added new command to read and write raw data.
+3. Change read and write max length to 32 words.
+4. CSLibrary update to 2.0.10
+
+2.0.9-144 Change History
+---------------------
+1. Added CSLibrary version in about page
+2. Set firmware minimum version with RFID 2.6.20
+3. CSLibrary update to 2.0.9
+
+2.0.8-142 Change History
+---------------------
+1. Set CSLibrary version number to 2.0.8
+2. cut the feature of increase 3dB 
+
+2.0.7S-141 Change History
+---------------------
+1. Increase 3db RFID power in Library (max 33dB)
+ 
+2.0.6-140 Change History
+---------------------
+1. use new barcode protocol
+ 
+2.0.6-138 Change History
+---------------------
+1. Added new setting Mac reg 0x201 set to 0x10
+ 
+2.0.6-137 Change History
+---------------------
+1. Fix android phone hang up problem
+ 
+2.0.6-136 Change History
+---------------------
+1. Fix can not set dwell to 0
+2. Fix can not reset battery low color when battery low to battery high
+3. Show full version number and build number in about page (like "2.0.6-136")
+
+2.0.5-135 Change History
+---------------------
+1. Fix some time can not turn on vibrator.
+2. Fix reselect the reader when the reader disconnected.
+
+2.0.5-133 Change History
+---------------------
+1. New way of control of vibrator.
+
+2.0.5-132 Change History
+---------------------
+1. Supply "Vibrator only" module. (no barcode scanner)
+
+2.0.4-131 Change History
+---------------------
+1. Fixed can not stop inventory when use blue button.
+
+2.0.4-130 Change History
+---------------------
+1. Change default "Vibration Time" to 500 from 300.
+
+2.0.3-129 Change History
+---------------------
+1. use new vibrator command (only for BT firmware 1.0.11 or above)
+
+2.0.2-128 Change History
+---------------------
+1. send 2 times stop vibration command when stop vibrator.
+
+2.0.1-127 Change History
+---------------------
+1. fix can not get PCB version.
+ 
+2.0.0-126 Change History
+---------------------
+1. added vibrator on/off option in administration page (default off)
+2. change CSLibrary structure to support multi Bluetooth stack.
+ 
+1.0.22-125 Change History
+---------------------
+1. added vibrator on/off
+ 
+1.0.21-124 Change History
+---------------------
+1. added prefix and suffix in barcode system to fix breaking barcode problem.
+2. added battery low warring (Android version no change battery level color)
+3. immediately stop inventory.
+4. added button on delay when just button off.
+5. fix read/write error after do Geiger search.
+ 
+1.0.20 Change History
+---------------------
+1. Added barcode checking
+2. Added value input checking
+ 
+1.0.19 Change History
+---------------------
+1. Added "Share Feature" in inventory
+2. Added 2 more (total 3) battery level table
+
+1.0.18 Change History
+---------------------
+1. Added inventory delay time option
+2. Fix problem of hang up when long EPC
+
+1.0.17-117 Change History
+---------------------
+1. Speedup RFID configuration
+2. UI minor change
+ 
+1.0.16-113 Change History
+---------------------
+1. Fix can not receive key event problems
+2. Speedup register set up process
+
+1.0.14-110 Change History 
+---------------------
+1. Added barcode module detected function
+2. fix inventory slow speed bugs
+3. added RSSI format option
+ 
+1.0.13-107 Change History 
+---------------------
+1. Bugs fix
+ 
+1.0.12-104 Change History 
+---------------------
+1. Fix can not stop inventory
+2. Fix slow down tag rate when start inventory in second time.
+ 
+1.0.11-102 Change History 
+---------------------
+1. Resume API call from "System.Diagnostics.Debug.WriteLine" to "Trace.Message" for fix handup problems in Android phone.
+ 
+1.0.11-101 Change History 
+---------------------
+1. Bugs fix
+ 
+1.0.10 Change History 
+---------------------
+1. New invenory compact mode for speed up tags rate to 80 tag/s
+ 
+1.0.9 Change History 
+---------------------
+1. Speed up barcode reading
+2. bug fix
+ 
+1.0.8 Change History
+---------------------
+1. UI enhancements
+2. Improve library performance
+ 
+1.0.7 Change History
+---------------------
+1. Change Setting Format
+2. Added Periodic Read function
+3. Change inventory beep sound
+
+1.0.6 Change History
+---------------------
+1. Fixed can not reset barcode reader to factory default setting
+2. Change default setting
+3. Support all frequency band (include two OEM table)
+4. Fixed wrong RSSI value
+ 
+1.0.5 Change History
+---------------------
+1. Added "Register Tag" feature
+2. Fix can not reset barcode to continuous mode problem.
