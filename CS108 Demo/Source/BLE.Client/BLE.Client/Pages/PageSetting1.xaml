@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
+             x:Class="BLE.Client.Pages.PageSetting1"
+                Title="Antenna">
+
+	<StackLayout Padding="10, 20, 10, 0">
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="View Battery Level Format" WidthRequest="100" />
+      <Button x:Name="buttonBatteryLevelFormat" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonBatteryLevelFormatClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Inventory Delay Time" WidthRequest="100" />
+		  <Entry x:Name="entryInventoryDelayTime" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Dwell Time" WidthRequest="100" />
+		  <Entry x:Name="entryDwellTime" Completed="entryDwellTimeCompleted" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Power" WidthRequest="100" />
+		  <Entry x:Name="entryPower" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Tag population" WidthRequest="100" />
+		  <Entry x:Name="entryTagPopulation" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+      
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Regulatory Region" WidthRequest="100" />
+      <Button x:Name="buttonRegion" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonRegionClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Frequency Order" WidthRequest="100" />
+      <Button x:Name="buttonFrequencyOrder" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonFrequencyOrderClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Fixed Channel" WidthRequest="100" />
+      <Button x:Name="buttonFixedChannel" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonFixedChannelClicked" />
+    </StackLayout>
+
+    <Button Text="SAVE" Font="Large" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnOKClicked" TextColor="Black" />
+    
+	</StackLayout>
+</pages:BasePage>
+    

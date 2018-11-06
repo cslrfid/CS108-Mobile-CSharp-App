@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F89C3167-B338-4616-8EB0-4951C3D64E5F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CSLibrary</RootNamespace>
+    <AssemblyName>CSLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="CSLibrary\BluetoothProtocol\BTConnect.cs" />
+    <Compile Include="CSLibrary\BluetoothProtocol\BTReceive.cs" />
+    <Compile Include="CSLibrary\BarcodeReader\ClassBarCode.cs" />
+    <Compile Include="CSLibrary\BarcodeReader\Constants\CSLibrary.Barcode.Constants.cs" />
+    <Compile Include="CSLibrary\BarcodeReader\Events\CSLibrary.Barcode.EventArgs.cs" />
+    <Compile Include="CSLibrary\BarcodeReader\Structures\CSLibrary.Barcode.Structures.cs" />
+    <Compile Include="CSLibrary\BluetoothIC\ClassBluetoothIC.cs" />
+    <Compile Include="CSLibrary\BluetoothProtocol\BTSend.cs" />
+    <Compile Include="CSLibrary\BluetoothProtocol\ClassBleDebug.cs" />
+    <Compile Include="CSLibrary\BluetoothProtocol\CSLibrary.Private.cs" />
+    <Compile Include="CSLibrary\HAL\MvvmCross.Plugin.BLE\ClassDebug.cs" />
+    <Compile Include="CSLibrary\HAL\MvvmCross.Plugin.BLE\ClassDeviceFinder.cs" />
+    <Compile Include="CSLibrary\HAL\MvvmCross.Plugin.BLE\CodeFileBLE.cs" />
+    <Compile Include="CSLibrary\Notification\ClassNotification.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.Country.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.FrequencyChannel.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.MacRegister.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.OEM.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.Read.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.Inventory.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.Select.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.Write.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Public.Algorithm.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Public.Country.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Public.FrequencyChannel.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Public.Operation.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Public.Power.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Public.Profile.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Constants\CSLibrary.Constants.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Constants\CSLibrary.Constants.Packet.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Constants\Intel.Constants.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Constants\SelectFlags.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.Private.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Structures\CSLibrary.Structures.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Structures\CSLibrary.Structures.TagKill.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Structures\CSLibrary.Structures.TagLock.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Structures\CSLibrary.Structures.TagRead.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Structures\CSLibrary.Structures.TagWrite.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Structures\Intel.Structures.cs" />
+    <Compile Include="CSLibrary\SiliconLabIC\ClassEvent.cs" />
+    <Compile Include="CSLibrary\SiliconLabIC\ClassSiliconLabIC.cs" />
+    <Compile Include="CSLibrary\Tools\ClassCRC16.cs" />
+    <Compile Include="CSLibrary\Tools\ClassFIFIQueue.cs" />
+    <Compile Include="CSLibrary\RFIDReader\Events\CSLibrary.Events.cs" />
+    <Compile Include="CSLibrary\RFIDReader\ClassRFID.cs" />
+    <Compile Include="CSLibrary\Tools\ClassTimer.cs" />
+    <Compile Include="CSLibrary\Tools\HexEncoding.cs" />
+    <Compile Include="CSLibrary\CSLibrary.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Acr.UserDialogs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Acr.UserDialogs.6.1.2\lib\portable-win+net45+wp8+win8+wpa81\Acr.UserDialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="Acr.UserDialogs.Interface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Acr.UserDialogs.6.1.2\lib\portable-win+net45+wp8+win8+wpa81\Acr.UserDialogs.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\MvvmCross.Binding.4.2.3\lib\portable-net45+win+wpa81+wp80\MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Core, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\MvvmCross.Core.4.2.3\lib\portable-net45+win+wpa81+wp80\MvvmCross.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Localization, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\MvvmCross.Binding.4.2.3\lib\portable-net45+win+wpa81+wp80\MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\MvvmCross.Platform.4.2.3\lib\portable-net45+win+wpa81+wp80\MvvmCross.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.BLE, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\MvvmCross.Plugin.BLE.1.3.0\lib\portable-net45+win8+wpa81+wp8\MvvmCross.Plugins.BLE.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BLE, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Plugin.BLE.1.3.0\lib\portable-net45+win8+wpa81+wp8\Plugin.BLE.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BLE.Abstractions, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Plugin.BLE.1.3.0\lib\portable-net45+win8+wpa81+wp8\Plugin.BLE.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Permissions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Plugin.Permissions.2.0.1\lib\netstandard1.0\Plugin.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Permissions.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Plugin.Permissions.2.0.1\lib\netstandard1.0\Plugin.Permissions.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Xam.Plugins.Settings.2.1.0\lib\portable-net45+wp8+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings.Abstractions, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Xam.Plugins.Settings.2.1.0\lib\portable-net45+wp8+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10\Plugin.Settings.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Splat.1.6.2\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Xaml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="..\..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
+  <Import Project="..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
+  <Import Project="..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\CS108 Demo\Source\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets'))" />
+  </Target>
+</Project>

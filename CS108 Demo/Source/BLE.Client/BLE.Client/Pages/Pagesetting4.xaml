@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
+             x:Class="BLE.Client.Pages.PageSetting4"
+                Title="Fixed Algo"
+            >
+
+	<StackLayout Padding="10, 20, 0, 0">
+
+		<Label Text="Q Value" />
+		<Entry x:Name="entryQValue" />
+
+		<Label Text="Retry" />
+		<Entry x:Name="entryRetry" />
+
+		<Label Text="Repeat" />
+		<Entry x:Name="entryRepeat" Focused="entryRepeatFocused" />
+
+    <Button Text="Save" Font="Large" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnOKClicked" TextColor="Black" />
+
+  </StackLayout>
+</pages:BasePage>
+    

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
+             x:Class="BLE.Client.Pages.PageSetting2"
+                Title="Query">
+
+  <StackLayout Padding="10, 20, 0, 0">
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Operation Mode" VerticalOptions="Center" />
+      <Button x:Name="buttonOperationMode" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonOperationModeClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Selected" WidthRequest="70" VerticalOptions="Center" />
+      <Button x:Name="buttonSelected" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonSelectedClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Session" WidthRequest="70" VerticalOptions="Center"	/>
+      <Button x:Name="buttonSession" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonSessionClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Target" WidthRequest="70" VerticalOptions="Center" />
+      <Button x:Name="buttonTarget" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonTargetClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Algorithm" WidthRequest="70" VerticalOptions="Center" />
+      <Button x:Name="buttonAlgorithm" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonAlgorithmClicked" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Profile (0-3)" WidthRequest="70" VerticalOptions="Center" />
+      <Button x:Name="buttonProfile" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonProfileClicked" />
+    </StackLayout>
+
+    <Button x:Name="btnOK" Text="SAVE" Font="Large" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnOKClicked" TextColor="Black" />
+  
+  </StackLayout>
+</pages:BasePage>

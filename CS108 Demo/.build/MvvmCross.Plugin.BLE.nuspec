@@ -1,0 +1,87 @@
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>MvvmCross.Plugin.BLE</id>
+    <version>1.2.0</version>
+    <title>Bluetooth LE Plugin for MvvmCross</title>
+    <authors>Adrian Seceleanu, Sven-Michael Stübe</authors>
+    <owners>Adrian Seceleanu, Sven-Michael Stübe</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/xabre/xamarin-bluetooth-le</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      This package contains a Bluetooth Low Energy plugin for MvvmCross. It allows access to Bluetooth Low Energy functionality on Android and iOS.
+      Read the full documentation on the projects page.
+    </description>
+    <tags>mvvm mvvmcross mvx xamarin monodroid Xamarin.iOS Xamarin.Android Bluetooth Low Energy BLE LE BTLE Smart ios android forms xamarinforms</tags>
+    <iconUrl>https://raw.githubusercontent.com/xabre/xamarin-bluetooth-le/master/icon_small.png</iconUrl>
+    <releaseNotes>
+      [1.2.0]
+      - #150 iOS: No disconnect when the connect CancelationToken is cancelled after a successful connect.
+      [1.2.0-beta4]
+      - #122 Android: Introduced a extra connectivity state to distinguish system connected device from app connected devices. System connected devices can't be used by the app because we have no gatt instance so we should allow to connect them via the adapter even though the ProfileState is -Connected-
+      [1.2.0-beta3]
+      - #121 #126 hardened characteristic discovery error handling for iOS
+      [1.2.0-beta2]
+      - #118 fixed crash on read in empty value on iOS
+      [1.2.0-beta1]
+      - #90: API change, added parent reference for IDescriptor to ICharacteristic to IService to IDevice
+      - #109, #111 merge PR: iOS parse TxPower, ServiceData
+      [1.1.0]
+      - stable release incuding all beta features
+      [1.1.0-beta5]
+      - #97 Fixe iOS GetSystemConnectedDevices implementation. FYI method is now called GetSystemConnectedOrPairedDevices
+      - #98 and #96 Merged GetSystemConnectedDevices and GetSystemPairedDevice into single method. iOS has no equivalent method for this so it makes more sense like this.
+      - #94 iOS: Quickfix, change to GetDescriptorsAsync in order to wait for callback
+      [1.1.0-beta4]
+      - #94 Android: Quickfix for descriptor read async, callback not invoked
+      [1.1.0-beta3]
+      - #82 Enable setting PeripheralScanningOptions for ScanForPeripherals on iOS
+      - #93 Fixed iOS crash when ble is off and ConnectingToKnownDeviceAsync. Wait for state and proper use of cancellation token.
+      - #94 Implementation of descriptor Write/Read for iOS and Android.
+      - #95 Async for start/stop notifications so that the descriptor write callback is invoked
+      [1.1.0-beta2]
+      - #78 BluetoothStateChangedArgs contain the old state and the new state
+      - #81 iOS: Removed code smell which caused crash. Temporarily removed UpdateName subscription.
+      - Android 4.4: fixed gatt callback to correctly detect gatt error when connecting to known device and not in range
+      - #86: GetSystemConnectedDevices, beta implementation, in order to use the device in the app call ConnectAsync
+      - #73: fixed crash when calling connecttoknwondevice without cancellation token
+      [1.1.0-beta1]
+      - improvements on xml documentation
+      - Characteristic write type can be specified by the user
+      - ConnectAsync throws NullReferenceException if device is null
+
+      for older releases: https://github.com/xabre/xamarin-bluetooth-le/blob/master/doc/changelog.md
+    </releaseNotes>
+    <dependencies>
+      <group targetFramework="MonoAndroid">
+        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="Plugin.BLE" version="[1.2.0]" />
+      </group>
+      <group targetFramework="Xamarin.iOS">
+        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="Plugin.BLE" version="[1.2.0]" />
+      </group>
+      <group targetFramework="portable-net45+win8+wpa81+wp8">
+        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="Plugin.BLE" version="[1.2.0]" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <!-- src -->
+    <!--
+    <file src="..\Source\MvvmCross.Plugins.BLE\**\*.cs" target="src\MvvmCross.Plugins.BLE" />
+    <file src="..\Source\MvvmCross.Plugins.BLE.Droid\**\*.cs" target="src\MvvmCross.Plugins.BLE.Droid" />
+    <file src="..\Source\MvvmCross.Plugins.BLE.iOS\**\*.cs" target="src\MvvmCross.Plugins.BLE.iOS" />-->
+    <!-- PCL -->
+    <file src="mvx\pcl\MvvmCross.Plugins.BLE.*" target="lib\portable-net45+win8+wpa81+wp8" />
+    <!-- droid -->
+    <file src="mvx\android\MvvmCross.Plugins.BLE.*" target="lib\MonoAndroid" />
+    <file src="mvx\android\MvvmCross.Plugins.BLE.Droid.*" target="lib\MonoAndroid" />
+    <file src="mvx\android\BlePluginBootstrap.cs.pp" target="content\MonoAndroid\Bootstrap\BlePluginBootstrap.cs.pp" />
+    <!-- iOS -->
+    <file src="mvx\ios\MvvmCross.Plugins.BLE.*" target="lib\Xamarin.iOS10" />
+    <file src="mvx\ios\MvvmCross.Plugins.BLE.iOS.*" target="lib\Xamarin.iOS10" />
+    <file src="mvx\ios\BlePluginBootstrap.cs.pp" target="content\Xamarin.iOS10\Bootstrap\BlePluginBootstrap.cs.pp" />
+  </files>
+</package>

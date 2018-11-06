@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
+             x:Class="BLE.Client.Pages.PageSetting3"
+                Title="Dynamic Algo">
+
+  <StackLayout Padding="10, 20, 0, 0">
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Start Q" WidthRequest="70" />
+      <Entry x:Name="entryStartQ" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Min Q" WidthRequest="70" />
+      <Entry x:Name="entryMinQ" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Max Q" WidthRequest="70" />
+      <Entry x:Name="entryMaxQ" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Max Query Rep" WidthRequest="140" />
+      <Entry x:Name="entryQueryRep" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Retry" WidthRequest="70" />
+      <Entry x:Name="entryRetry" HorizontalOptions="FillAndExpand" />
+    </StackLayout>
+
+    <Button Text="SAVE" Font="Large" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnOKClicked" TextColor="Black" />
+
+  </StackLayout>
+</pages:BasePage>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
+             x:Class="BLE.Client.Pages.PageSettingShortcut"
+             Title="General">
+
+    <StackLayout Padding="10, 20, 0, 0">
+
+        <StackLayout Orientation="Horizontal">
+            <Label Text="Function" WidthRequest="130" />
+            <Label Text="min Time" WidthRequest="90" />
+            <Label Text="max Time" WidthRequest="90" />
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal">
+            <Button x:Name="F1" Font="Large" HorizontalOptions="FillAndExpand" Clicked="btnFunctionSelectedClicked" WidthRequest="130" />
+            <Entry x:Name="F1MinTime" HorizontalOptions="FillAndExpand" Keyboard="Text" WidthRequest="90" />
+            <Entry x:Name="F1MaxTime" HorizontalOptions="FillAndExpand" Keyboard="Text" WidthRequest="90" />
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal">
+            <Button x:Name="F2" Font="Large" HorizontalOptions="FillAndExpand" Clicked="btnFunctionSelectedClicked" WidthRequest="130" />
+            <Entry x:Name="F2MinTime" HorizontalOptions="FillAndExpand" Keyboard="Text" WidthRequest="90" />
+            <Entry x:Name="F2MaxTime" HorizontalOptions="FillAndExpand" Keyboard="Text" WidthRequest="90" />
+        </StackLayout>
+
+		<Label TextColor="White" WidthRequest="100">
+			<Label.Text>
+				blah blah
+			</Label.Text>
+		</Label>
+
+		<StackLayout Orientation="Horizontal">
+			<Label Text="Inventory Alert Sound"  VerticalOptions="Center" />
+			<Switch x:Name="switchInventoryAlertSound"/>
+		</StackLayout>
+
+		<Button Text="Save" Font="Large" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnSaveClicked" TextColor="Black" />
+		<Button Text="Clear" Font="Large" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnClearClicked" TextColor="Black" />
+		<Button Text="Barcode Reset to Continuous Mode" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" Clicked="btnBarcodeResetClicked" TextColor="Black" />
+		<Button Text="Reset Software and Reader to Default Setting" Clicked="btnConfigResetClicked" HorizontalOptions="FillAndExpand" BackgroundColor="Gray" TextColor="Black" />
+
+	</StackLayout>
+
+</pages:BasePage>

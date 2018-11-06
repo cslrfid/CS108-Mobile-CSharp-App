@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['selected',['Selected',['../namespace_c_s_library_1_1_constants.html#ae83a76896d83879dc90617ee1c7d50f3',1,'CSLibrary::Constants']]],
+  ['selectflags',['SelectFlags',['../namespace_c_s_library_1_1_constants.html#a0b11909d3d307dd6fd3e3824c25b4db0',1,'CSLibrary.Constants.SelectFlags()'],['../namespace_c_s_library_1_1_constants.html#a0b11909d3d307dd6fd3e3824c25b4db0',1,'CSLibrary.Constants.SelectFlags()']]],
+  ['selectmaskflags',['SelectMaskFlags',['../namespace_c_s_library_1_1_constants.html#af3a58fe00319be4ee19c20b562842f6f',1,'CSLibrary::Constants']]],
+  ['sendremark',['SENDREMARK',['../class_c_s_library_1_1_r_f_i_d_reader.html#ac02163a0d89634e57534daf9cbc804b3',1,'CSLibrary::RFIDReader']]],
+  ['sequencemask',['SequenceMask',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#a23cb7070624288f8d8b6ac50fafbd004',1,'CSLibrary::Barcode::Constants']]],
+  ['sequencemode',['SequenceMode',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#a7456fbe200ebe4500de84ee9c690edf8',1,'CSLibrary::Barcode::Constants']]],
+  ['session',['Session',['../namespace_c_s_library_1_1_constants.html#a985a221cead513400425775914d834c4',1,'CSLibrary::Constants']]],
+  ['sessiontarget',['SessionTarget',['../namespace_c_s_library_1_1_constants.html#ab16059c6d55133bca83364d66a6712cc',1,'CSLibrary::Constants']]],
+  ['setuptype',['SetupType',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#ab18725e656bfddaa4835cde080c049e0',1,'CSLibrary::Barcode::Constants']]],
+  ['singulationalgorithm',['SingulationAlgorithm',['../namespace_c_s_library_1_1_constants.html#a869caa852f4f070029747fbd07282156',1,'CSLibrary::Constants']]],
+  ['state',['STATE',['../class_c_s_library_1_1_barcode_reader.html#a5e7b8402dfef71256352d4bfddc08e13',1,'CSLibrary::BarcodeReader']]],
+  ['stopbit',['StopBit',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#ae860e79a9b8fe0e36978a758ceadaf1a',1,'CSLibrary::Barcode::Constants']]],
+  ['symbol',['Symbol',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#aeca563cb4afbd6c49a85922941bba3cd',1,'CSLibrary::Barcode::Constants']]],
+  ['symbolflags',['SymbolFlags',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#a9129fd88e154397acaa8a0fc5d3aaee2',1,'CSLibrary::Barcode::Constants']]],
+  ['symbolmask',['SymbolMask',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#a819d3c94c0395860b8985a5da1488b4b',1,'CSLibrary::Barcode::Constants']]],
+  ['symid',['SymID',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#ac93a8c9e3b93068f4dcb021ec0644dab',1,'CSLibrary::Barcode::Constants']]],
+  ['systemspeed',['SystemSpeed',['../namespace_c_s_library_1_1_barcode_1_1_constants.html#abd2f18273cfe327b199bef783eef83c0',1,'CSLibrary::Barcode::Constants']]]
+];
