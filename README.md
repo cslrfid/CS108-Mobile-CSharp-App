@@ -4,6 +4,9 @@ CS108 Xamarin C# Bluetooth Demo App and SDK
 
 This application provides demonstrations to the programming interface made available on the CS108 handheld reader for configuring, controlling, and accessing the RFID reader.  The development was based on the unified CS108 C# Callback-based API that made available on different CSL readers.  This API is applicable to both iPhone iOS and Android environment.  
 
+[Product Information](https://www.convergence.com.hk/cs108/)
+<br>
+
 ## Pre-requisite
 
 The build environment consists of tools and the corresponding configurations of the Visual Studio 2017(Windows) or Xamarin (Mac).  It is expected that the system integrator or the software system programming house will be developing the applications on Visual Studio 2017 (Windows) or Xamarin (Mac).  With this tool, typically he has to write programs on the PC/Mac.  The following are needed to set up the build environment.
@@ -49,6 +52,7 @@ The CS108 Callback-based API Library consists of the following files.
 |File   | Location of source code |Remarks  |
 |-------|-------------------------|---------|
 |CSLibrary.dll|Inside folder “/CSLibrary/bin/Debug” of the CS108 Demo Code|CSL C# Callback-based API Class Library. Different library files.|
+<br>
 
 ## CS108 C# API: Theory of Operation
 
