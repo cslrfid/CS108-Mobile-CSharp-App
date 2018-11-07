@@ -1,3 +1,3 @@
 CSLibrary/docs/html/* linguist-vendored=true
 CSLibrary/docs/rtf/* linguist-vendored=true
-
+*.cs linguist-language=C#
