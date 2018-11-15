@@ -1,4 +1,4 @@
-# CslCs108MobileCSharpApp
+# CS108-Mobile-CSharp-App
 
 CS108 Xamarin C# Bluetooth Demo App and SDK
 
