@@ -19,13 +19,13 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
-	<string>9.3</string>
+	<string>7.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>CS108 RFID Reader</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.10</string>
+	<string>2.0.12</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Only for testing, we don&apos;t need the data to do anything</string>
 	<key>UIApplicationExitsOnSuspend</key>
@@ -36,8 +36,6 @@
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>the program will detected location of device and send the location to cloud server</string>
-	<key>CFBundleVersion</key>
-	<string>147</string>
 	<key>CFBundleShortVersion</key>
 	<string>0.0.17</string>
 	<key>CFBundleName</key>
@@ -55,5 +53,7 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>CFBundleVersion</key>
+	<string>152</string>
 </dict>
 </plist>

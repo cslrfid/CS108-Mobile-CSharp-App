@@ -74,6 +74,8 @@ namespace BLE.Client.ViewModels
         uint writeKILLPWDRetryCnt = 0;
         uint writeUSERRetryCnt = 0;
 
+        UInt16 _updatedEPCLen = 6;
+        
         public ViewModelReadWrite(IAdapter adapter, IUserDialogs userDialogs) : base(adapter)
         {
             _userDialogs = userDialogs;
@@ -135,19 +137,40 @@ namespace BLE.Client.ViewModels
                     case CSLibrary.Constants.Bank.PC:
                         if (e.success)
                         {
-                            entryPC = BleMvxApplication._reader.rfid.Options.TagReadPC.pc.ToString();
-                            RaisePropertyChanged(() => entryPC);
+                            if (switchPCIsToggled)
+                            { 
+                                entryPC = BleMvxApplication._reader.rfid.Options.TagReadPC.pc.ToString();
+                                RaisePropertyChanged(() => entryPC);
+                                labelPCStatus = "Ok";
+                                RaisePropertyChanged(() => labelPCStatus);
+                            }
 
-							labelPCStatus = "O";
-						}
-						else
+                            _updatedEPCLen = (UInt16)((BleMvxApplication._reader.rfid.Options.TagReadPC.pc.ToUshorts()[0]) >> 11);
+
+                            if (switchEPCIsToggled)
+                            {
+                                readEPCRetryCnt = 7;
+                                ReadEPC();
+                            }
+                        }
+                        else
 						{
                             if (--readPCRetryCnt == 0)
-                                labelPCStatus = "E";
+                            {
+                                if (switchPCIsToggled)
+                                {
+                                    labelPCStatus = "Er";
+                                    RaisePropertyChanged(() => labelPCStatus);
+                                }
+                                else if (switchEPCIsToggled)
+                                {
+                                    labelEPCStatus = "Er";
+                                    RaisePropertyChanged(() => labelEPCStatus);
+                                }
+                            }
                             else
                                 ReadPC();
 						}
-						RaisePropertyChanged(() => labelPCStatus);
 						break;
 
                     case CSLibrary.Constants.Bank.EPC:
@@ -155,12 +178,12 @@ namespace BLE.Client.ViewModels
                         {
                             entryEPC = BleMvxApplication._reader.rfid.Options.TagReadEPC.epc.ToString();
                             RaisePropertyChanged(() => entryEPC);
-							labelEPCStatus = "O";
+							labelEPCStatus = "Ok";
 						}
 						else
 						{
                             if (--readEPCRetryCnt == 0)
-							    labelEPCStatus = "E";
+							    labelEPCStatus = "Er";
                             else
                                 ReadEPC();
 						}
@@ -172,12 +195,12 @@ namespace BLE.Client.ViewModels
                         {
                             entryACCPWD = BleMvxApplication._reader.rfid.Options.TagReadAccPwd.password.ToString();
                             RaisePropertyChanged(() => entryACCPWD);
-							labelACCPWDStatus = "O";
+							labelACCPWDStatus = "Ok";
 						}
 						else
 						{
                             if (--readACCPWDRetryCnt == 0)
-                                labelACCPWDStatus = "E";
+                                labelACCPWDStatus = "Er";
                             else
                                 ReadACCPWD();
 						}
@@ -189,12 +212,12 @@ namespace BLE.Client.ViewModels
                         {
                             entryKILLPWD = BleMvxApplication._reader.rfid.Options.TagReadKillPwd.password.ToString();
                             RaisePropertyChanged(() => entryKILLPWD);
-							labelKILLPWDStatus = "O";
+							labelKILLPWDStatus = "Ok";
 						}
 						else
 						{
                             if (--readKILLPWDRetryCnt == 0)
-                                labelKILLPWDStatus = "E";
+                                labelKILLPWDStatus = "Er";
                             else
                                 ReadKILLPWD();
 						}
@@ -206,12 +229,12 @@ namespace BLE.Client.ViewModels
                         {
                             entryTIDUID = BleMvxApplication._reader.rfid.Options.TagReadTid.tid.ToString();
                             RaisePropertyChanged(() => entryTIDUID);
-							labelTIDUIDStatus = "O";
+							labelTIDUIDStatus = "Ok";
 						}
 						else
 						{
                             if (--readTIDUIDRetryCnt == 0)
-                                labelTIDUIDStatus = "E";
+                                labelTIDUIDStatus = "Er";
                             else
                                 ReadTIDUID();
 						}
@@ -223,12 +246,12 @@ namespace BLE.Client.ViewModels
                         {
                             entryUSER = BleMvxApplication._reader.rfid.Options.TagReadUser.pData.ToString();
                             RaisePropertyChanged(() => entryUSER);
-							labelUSERStatus = "O";
+							labelUSERStatus = "Ok";
 						}
 						else
 						{
                             if (--readUSERRetryCnt == 0)
-                                labelUSERStatus = "E";
+                                labelUSERStatus = "Er";
                             else
                                 ReadUSER();
 						}
@@ -240,12 +263,12 @@ namespace BLE.Client.ViewModels
                         {
                             entryKILLPWD = BleMvxApplication._reader.rfid.Options.TagRead.pData.ToString();
                             RaisePropertyChanged(() => entryKILLPWD);
-                            labelKILLPWDStatus = "O";
+                            labelKILLPWDStatus = "Ok";
                         }
                         else
                         {
                             if (--readKILLPWDRetryCnt == 0)
-                                labelKILLPWDStatus = "E";
+                                labelKILLPWDStatus = "Er";
                             else
                                 ReadKILLPWD();
                         }
@@ -262,12 +285,12 @@ namespace BLE.Client.ViewModels
 					case CSLibrary.Constants.Bank.PC:
 						if (e.success)
 						{
-							labelPCStatus = "O";
+							labelPCStatus = "Ok";
 						}
 						else
 						{
                             if (--writePCRetryCnt == 0)
-                                labelPCStatus = "E";
+                                labelPCStatus = "Er";
                             else
                                 WritePC ();
 						}
@@ -277,12 +300,12 @@ namespace BLE.Client.ViewModels
 					case CSLibrary.Constants.Bank.EPC:
 						if (e.success)
 						{
-							labelEPCStatus = "O";
+							labelEPCStatus = "Ok";
 						}
 						else
 						{
                             if (--writeEPCRetryCnt == 0)
-                                labelEPCStatus = "E";
+                                labelEPCStatus = "Er";
                             else
                                 WriteEPC();
 						}
@@ -292,12 +315,12 @@ namespace BLE.Client.ViewModels
 					case CSLibrary.Constants.Bank.ACC_PWD:
 						if (e.success)
 						{
-							labelACCPWDStatus = "O";
+							labelACCPWDStatus = "Ok";
 						}
 						else
 						{
                             if (--writeACCPWDRetryCnt == 0)
-                                labelACCPWDStatus = "E";
+                                labelACCPWDStatus = "Er";
                             else
                                 WriteACCPWD();
 						}
@@ -307,12 +330,12 @@ namespace BLE.Client.ViewModels
 					case CSLibrary.Constants.Bank.KILL_PWD:
 						if (e.success)
 						{
-							labelKILLPWDStatus = "O";
+							labelKILLPWDStatus = "Ok";
 						}
 						else
 						{
                             if (--writeKILLPWDRetryCnt == 0)
-                                labelKILLPWDStatus = "E";
+                                labelKILLPWDStatus = "Er";
                             else
                                 WriteKILLPWD();
 						}
@@ -322,12 +345,12 @@ namespace BLE.Client.ViewModels
 					case CSLibrary.Constants.Bank.USER:
 						if (e.success)
 						{
-							labelUSERStatus = "O";
+							labelUSERStatus = "Ok";
 						}
 						else
 						{
                             if (--writeUSERRetryCnt == 0)
-                                labelUSERStatus = "E";
+                                labelUSERStatus = "Er";
                             else
                                 WriteUSER();
 						}
@@ -337,12 +360,12 @@ namespace BLE.Client.ViewModels
                     case CSLibrary.Constants.Bank.SPECIFIC:
                         if (e.success)
                         {
-                            labelKILLPWDStatus = "O";
+                            labelKILLPWDStatus = "Ok";
                         }
                         else
                         {
                             if (--writeKILLPWDRetryCnt == 0)
-                                labelKILLPWDStatus = "E";
+                                labelKILLPWDStatus = "Er";
                             else
                                 WriteKILLPWD();
                         }
@@ -481,17 +504,28 @@ namespace BLE.Client.ViewModels
             {
 				labelPCStatus = "R";
 
+                if (switchEPCIsToggled)
+                    labelEPCStatus = "R";
+
                 readPCRetryCnt = m_retry_cnt;
                 ReadPC();
 			}
+            else if (switchEPCIsToggled)
+            {
+                labelEPCStatus = "R";
 
-			if (switchEPCIsToggled)
+                readPCRetryCnt = m_retry_cnt;
+                ReadPC();
+            }
+
+            /*
+            if (switchEPCIsToggled)
             {
 				labelEPCStatus = "R";
 
                 readEPCRetryCnt = m_retry_cnt;
                 ReadEPC();
-			}
+			}*/
 
 			//if access bank is checked, read it.
 			if (switchACCPWDIsToggled)
@@ -666,7 +700,7 @@ namespace BLE.Client.ViewModels
         void ReadEPC ()
         {
 			BleMvxApplication._reader.rfid.Options.TagReadEPC.accessPassword = accessPwd;
-            BleMvxApplication._reader.rfid.Options.TagReadEPC.count = 6;
+            BleMvxApplication._reader.rfid.Options.TagReadEPC.count = _updatedEPCLen;
 
             BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_READ_EPC);
 		}
@@ -678,26 +712,12 @@ namespace BLE.Client.ViewModels
             BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_READ_ACC_PWD);
 		}
 
-        /* for testing
-                void ReadKILLPWD ()
-                {
-                    BleMvxApplication._reader.rfid.Options.TagReadKillPwd.accessPassword = accessPwd;
-
-                    BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_READ_KILL_PWD);
-                }
-        */
-
-        void ReadKILLPWD()
+        void ReadKILLPWD ()
         {
-            BleMvxApplication._reader.rfid.Options.TagRead.accessPassword = accessPwd;
+            BleMvxApplication._reader.rfid.Options.TagReadKillPwd.accessPassword = accessPwd;
 
-            BleMvxApplication._reader.rfid.Options.TagRead.bank =  CSLibrary.Constants.MemoryBank.BANK1; // EPC Bank
-            BleMvxApplication._reader.rfid.Options.TagRead.offset = 1; // 0 is CRC can not read
-            BleMvxApplication._reader.rfid.Options.TagRead.count = 9;
-
-            BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_READ);
+            BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_READ_KILL_PWD);
         }
-
 
         void ReadTIDUID ()
 		{
@@ -725,28 +745,13 @@ namespace BLE.Client.ViewModels
             BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_WRITE_ACC_PWD);
         }
 
-        /*
-                void WriteKILLPWD ()
-                {
-                    BleMvxApplication._reader.rfid.Options.TagWriteKillPwd.accessPassword = accessPwd;
-                    BleMvxApplication._reader.rfid.Options.TagWriteKillPwd.password = Convert.ToUInt32(entryKILLPWD, 16);
-
-                    BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_WRITE_KILL_PWD);
-                }
-        */
-
-        void WriteKILLPWD()
+        void WriteKILLPWD ()
         {
-            BleMvxApplication._reader.rfid.Options.TagWrite.accessPassword = accessPwd;
+            BleMvxApplication._reader.rfid.Options.TagWriteKillPwd.accessPassword = accessPwd;
+            BleMvxApplication._reader.rfid.Options.TagWriteKillPwd.password = Convert.ToUInt32(entryKILLPWD, 16);
 
-            BleMvxApplication._reader.rfid.Options.TagWrite.bank = CSLibrary.Constants.MemoryBank.BANK1; // EPC Bank
-            BleMvxApplication._reader.rfid.Options.TagWrite.offset = 1; // 0 is CRC can not read
-            BleMvxApplication._reader.rfid.Options.TagWrite.count = 9;
-            BleMvxApplication._reader.rfid.Options.TagWrite.pData = CSLibrary.Tools.Hex.ToUshorts(entryKILLPWD);
-
-            BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_WRITE);
+            BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_WRITE_KILL_PWD);
         }
-
 
         void WriteUSER ()
         {

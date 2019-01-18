@@ -38,7 +38,7 @@ namespace CSLibrary.Constants
         /// <summary>
         /// Tag Inventory, Only PC and EPC will backscatter
         /// </summary>
-        TAG_INVENTORY,
+        //TAG_INVENTORY,
         /// <summary>
         /// Specific-Tag Searching, Only PC , EPC and RSSI will backscatter
         /// </summary>
@@ -280,7 +280,7 @@ namespace CSLibrary.Constants
     /// LBT Config
     /// </summary>
     
-    public enum LBT : uint
+    internal enum LBT : uint
     {
         /// <summary>
         /// LBT OFF
@@ -1213,6 +1213,10 @@ ISO/IEC 24730 (WhereNet)	48	0000 0000	0000 0000	xxxx xxxx xxxx xxxx xxxx xxxx xx
         TAG_FASTSELECTED,
 
         TAG_PREFILTER,
+
+        TAG_UNTRACEABLE,
+
+        TAG_READBUFFER,
     }
     /// <summary>
     /// Memory bank
@@ -1244,9 +1248,13 @@ ISO/IEC 24730 (WhereNet)	48	0000 0000	0000 0000	xxxx xxxx xxxx xxxx xxxx xxxx xx
         /// </summary>
         USER,
         /// <summary>
-        /// User memory
+        /// Any bank memory
         /// </summary>
         SPECIFIC,
+        /// <summary>
+        /// Untraceable
+        /// </summary>
+        UNTRACEABLE,
         /// <summary>
         /// Unknown bank
         /// </summary>

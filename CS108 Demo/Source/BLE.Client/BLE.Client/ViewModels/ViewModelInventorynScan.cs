@@ -848,9 +848,9 @@ namespace BLE.Client.ViewModels
                         BleMvxApplication._batteryLow = true;
 
                         if (batlow == ClassBattery.BATTERYLEVELSTATUS.LOW)
-                            _userDialogs.AlertAsync("14% Battery Life Left, Please Recharge CS108 or Replace Freshly Charged CS108B");
-                        else if (batlow == ClassBattery.BATTERYLEVELSTATUS.LOW_17)
-                            _userDialogs.AlertAsync("8% Battery Life Left, Please Recharge CS108 or Replace with Freshly Charged CS108B");
+                            _userDialogs.AlertAsync("20% Battery Life Left, Please Recharge CS108 or Replace Freshly Charged CS108B");
+                        //else if (batlow == ClassBattery.BATTERYLEVELSTATUS.LOW_17)
+                        //    _userDialogs.AlertAsync("8% Battery Life Left, Please Recharge CS108 or Replace with Freshly Charged CS108B");
 
                         RaisePropertyChanged(() => labelVoltageTextColor);
                     }
@@ -1248,7 +1248,7 @@ namespace BLE.Client.ViewModels
                     //string rootPath = @"https://192.168.25.21:29090/WebServiceRESTs/1.0/req";
                     string fullPath1 = BleMvxApplication._config.RFID_IPAddress;
 
-                    if (fullPath1.Substring(12, 18) == "convergence.com.hk")
+                    if (fullPath1.Substring(8, 28) == "democloud.convergence.com.hk")
                         fullPath1 += @"/create-update-delete/update-entity/tagdata";
 
                     var uri1 = new Uri(string.Format(fullPath1, string.Empty));

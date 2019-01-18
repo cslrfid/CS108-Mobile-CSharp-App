@@ -68,7 +68,7 @@ namespace BLE.Client.ViewModels
 
         ~ViewModelGeiger()
         {
-            BleMvxApplication._reader.rfid.StopOperation();
+            //BleMvxApplication._reader.rfid.StopOperation();
             //SetEvent(false);
         }
 

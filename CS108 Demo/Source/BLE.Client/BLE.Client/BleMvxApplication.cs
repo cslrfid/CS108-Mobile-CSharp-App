@@ -109,10 +109,10 @@ namespace BLE.Client
 			RFID_MBI_MultiBank2Enable = false;
 			RFID_MBI_MultiBank1 = CSLibrary.Constants.MemoryBank.TID;
 			RFID_MBI_MultiBank1Offset = 0;
-			RFID_MBI_MultiBank1Count = 1;
+			RFID_MBI_MultiBank1Count = 2;
 			RFID_MBI_MultiBank2 = CSLibrary.Constants.MemoryBank.USER;
 			RFID_MBI_MultiBank2Offset = 0;
-			RFID_MBI_MultiBank2Count = 1;
+			RFID_MBI_MultiBank2Count = 2;
 
             RFID_InventoryAlertSound = true;
             RFID_QOverride = false;
