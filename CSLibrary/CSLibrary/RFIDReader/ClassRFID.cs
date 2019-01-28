@@ -44,7 +44,7 @@ namespace CSLibrary
             set { m_rdr_opt_parms = value; }
         }
         public UInt32 LastMacErrorCode;
-
+        public UInt16 LastResultCode = 0;
 
         private HighLevelInterface _deviceHandler;
         private CSLibrary.Tools.Queue _dataBuffer = new Tools.Queue(16 * 1024 * 1024);
@@ -573,6 +573,9 @@ namespace CSLibrary
                 case 0x04:  // EAS
                     break;
 
+                case 0x00: // Untraceable?
+                    break;
+
                 default:
                     return false;
             }
@@ -856,8 +859,22 @@ namespace CSLibrary
 														null));
 												}
 												break;
-										}
-									}
+
+                                            case CSLibrary.Constants.Operation.TAG_UNTRACEABLE:
+                                                {
+                                                    CSLibrary.Debug.WriteLine("Tag untraceable end {0}", currentCommandResponse);
+
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.UNTRACEABLE,
+                                                        TagAccess.WRITE,
+                                                        null));
+                                                }
+                                                break;
+
+                                        }
+                                    }
 
 									FireStateChangedEvent(CSLibrary.Constants.RFState.IDLE);
 									break;

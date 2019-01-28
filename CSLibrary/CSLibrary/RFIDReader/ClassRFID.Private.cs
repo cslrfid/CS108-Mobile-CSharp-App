@@ -322,6 +322,13 @@ namespace CSLibrary
             HST_RFTC_FRQCH_DESC_PARFU3 = 0x0C07,
             HST_RFTC_FRQCH_CMDSTART = 0x0C08,
 
+            AUTHENTICATE_CFG = 0x0F00,
+            AUTHENTICATE_MSG0 = 0x0F01,
+            AUTHENTICATE_MSG1 = 0x0F02,
+            AUTHENTICATE_MSG2 = 0x0F03,
+            AUTHENTICATE_MSG3 = 0x0F04,
+            UNTRACEABLE_CFG = 0x0F05,
+
             INV_CYCLE_DELAY = 0x0F0F,
 
             HST_CMD = 0xF000
@@ -383,6 +390,8 @@ namespace CSLibrary
             CUSTOMEMGETSENSORDATA,
             CUSTOMEMRESETALARMS,
             CUSTOMEMSENDSPI,
+            AUTHENTICATE = 0x50,
+            UNTRACEABLE = 0x52,
             CMD_END
         }
 
@@ -830,6 +839,35 @@ namespace CSLibrary
             //FireStateChangedEvent(RFState.IDLE);
         }
 
+        private void TagUntraceableThreadProc()
+        {
+            UInt32 value = 0;
+
+            if (m_rdr_opt_parms.TagUntraceable.EPCLength >= 32)
+            {
+                m_Result = Result.INVALID_PARAMETER;
+                return;
+            }
+
+            value |= (UInt32)m_rdr_opt_parms.TagUntraceable.Range;
+            value |= ((UInt32)m_rdr_opt_parms.TagUntraceable.User << 2);
+            value |= ((UInt32)m_rdr_opt_parms.TagUntraceable.TID << 3);
+            value |= ((UInt32)m_rdr_opt_parms.TagUntraceable.EPC << 10);
+            value |= ((UInt32)m_rdr_opt_parms.TagUntraceable.EPCLength << 5);
+            value |= ((UInt32)m_rdr_opt_parms.TagUntraceable.U << 11);
+
+            MacWriteRegister( MACREGISTER.UNTRACEABLE_CFG, value);
+
+            // Issue the untraceable command
+            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.UNTRACEABLE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
+        }
+
+        private void TagReadBufferThreadProc()
+        {
+            m_Result = Result.INVALID_PARAMETER;
+            return;
+        }
+
         /// <summary>
         /// rfid reader packet
         /// </summary>
@@ -883,39 +921,6 @@ namespace CSLibrary
             _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.WROEM), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE, (UInt32)0xffffffff);
 
             return Result.OK;
-
-            /*
-                        UInt32 readvalue = 0;
-                        int retry = 3;
-
-
-                        if (NetWakeup() != Result.OK)
-                            return Result.FAILURE;
-
-                        for (; retry > 0; retry--)
-                        {
-                            if (MacWriteRegister(MacRegister.HST_OEM_ADDR, address) != Result.OK)
-                                return Result.FAILURE;
-
-                            if (MacWriteRegister(MacRegister.HST_OEM_DATA, value) != Result.OK)
-                                return Result.FAILURE;
-
-                            Thread.Sleep(100);
-
-                            if (COMM_HostCommand(HST_CMD.WROEM) != Result.OK)
-                                return Result.FAILURE;
-
-                            Thread.Sleep(100);
-
-                            if (MacReadOemData(address, ref readvalue) != Result.OK)
-                                return Result.FAILURE;
-
-                            if (readvalue == value)
-                                return Result.OK;
-                        }
-
-                        return Result.FAILURE;
-            */
         }
 
     }

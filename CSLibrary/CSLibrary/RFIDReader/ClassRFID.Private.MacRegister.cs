@@ -33,6 +33,7 @@ namespace CSLibrary
         UInt32[] _0c08 = null;             // 0X0c08
         UInt32[] _0d00 = null;
         UInt32[] _0e00 = null;
+        UInt32[] _0f00_f05 = null;
         UInt32[] _0f0f = null;
 
         public bool MacRegisterInitialize()
@@ -136,6 +137,8 @@ namespace CSLibrary
 
             _0d00 = new UInt32[0];
             _0e00 = new UInt32[0];
+
+            _0f00_f05 = new UInt32[6];          // 0x0f00 ~ 0x0f05
             _0f0f = new UInt32[1];
 
 
@@ -161,6 +164,10 @@ namespace CSLibrary
             _0a00_a07[0x02] = 0x0001;
             _0a00_a07[0x03] = 0x0002;
             _0a00_a07[0x04] = 0x0001;
+
+            for (int cnt = 0; cnt < 50; cnt++)
+                for (int cnt1 = 0; cnt1 < 6; cnt1++)
+                    _0c02_c07[cnt, cnt1] = 0xffffff;
 
             ReadReaderRegister(0x0000); // Get RFID Reader Firmware version
             //ReadReaderRegister(0x0800);
@@ -340,6 +347,8 @@ namespace CSLibrary
                     case 0x0f00:
                         if (addressoffset == 0x000f)
                             return _0f0f[0];
+                        else if (addressoffset >= 0x0000 && addressoffset <= 0x0005)
+                            return _0f00_f05[addressoffset];
                         break;
 
                     default:
@@ -621,6 +630,13 @@ namespace CSLibrary
                             if (data != _0f0f[0])
                             {
                                 _0f0f[0] = data;
+                                _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(address, data), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.BTAPIRESPONSE);
+                            }
+                        } else if (addressoffset >= 0x0000 && addressoffset <= 0x0005)
+                        {
+                            if (data != _0f00_f05[addressoffset])
+                            {
+                                _0f00_f05[addressoffset] = data;
                                 _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(address, data), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.BTAPIRESPONSE);
                             }
                         }

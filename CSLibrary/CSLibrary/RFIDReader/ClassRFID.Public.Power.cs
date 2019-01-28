@@ -19,6 +19,19 @@ namespace CSLibrary
         }
 
         /// <summary>
+        /// Get current power level
+        /// </summary>
+        public uint SelectedPowerLevel
+        {
+            get
+            {
+                uint pwrlvl = 0;
+                GetPowerLevel(ref pwrlvl);
+                return pwrlvl;
+            }
+        }
+
+        /// <summary>
         /// Get Power Level
         /// </summary>
         public Result GetPowerLevel(ref uint pwrlvl)

@@ -16,6 +16,19 @@ namespace CSLibrary
         }
 
         /// <summary>
+        /// Current selected frequency
+        /// </summary>
+        public uint SelectedLinkProfile
+        {
+            get
+            {
+                uint link = 0;
+                GetCurrentLinkProfile(ref link);
+                return link;
+            }
+        }
+
+        /// <summary>
         /// Allows the application to set the current link profile for the radio 
         /// module.  A link profile will remain in effect until changed by a 
         /// subsequent call to RFID_RadioSetCurrentLinkProfile.  The 

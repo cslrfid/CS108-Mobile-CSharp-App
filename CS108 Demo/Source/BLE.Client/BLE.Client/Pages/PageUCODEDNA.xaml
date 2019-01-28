@@ -21,37 +21,55 @@
       <StackLayout Orientation="Horizontal">
         <Label Text="Key 0 (128 bits)" WidthRequest="70" />
         <Entry Text="{ Binding entrySelectedKey0, Mode=TwoWay }" HorizontalOptions="FillAndExpand" />
+        <Label Text="{ Binding labelKey0Status }" WidthRequest="20" HorizontalOptions="End" VerticalOptions="Center" />
       </StackLayout>
 
       <StackLayout Orientation="Horizontal">
         <Label Text="Key 1 (128 bits)" WidthRequest="70" />
         <Entry Text="{ Binding entrySelectedKey1, Mode=TwoWay }" HorizontalOptions="FillAndExpand" />
-      </StackLayout>
-
-      <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
-        <Button Text="Read Key" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnReadKeyButtonCommand}" />
+        <Label Text="{ Binding labelKey1Status }" WidthRequest="20" HorizontalOptions="End" VerticalOptions="Center" />
       </StackLayout>
 
       <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
         <Button Text="Set Random Key" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnRandomKeyButtonCommand}" />
       </StackLayout>
 
-      <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
-        <Button Text="Write Key" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnWriteKeyButtonCommand}" />
-      </StackLayout>
+      <Grid>
+          <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Button Text="Read Key" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnReadKeyButtonCommand}" HorizontalOptions="FillAndExpand" Grid.Column="0"/>
+          <Button Text="Write Key" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnWriteKeyButtonCommand}" HorizontalOptions="FillAndExpand" Grid.Column="1"/>
+      </Grid>      
 
-      <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
-        <Button Text="Activate Keys" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnActivateKeyButtonCommand}" />
-      </StackLayout>
+      <Grid>
+          <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Button Text="Hide EPC" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnHideButtonCommand}" HorizontalOptions="FillAndExpand"  Grid.Column="0"/>
+          <Button Text="Unhide EPC" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnUnhideButtonCommand}" HorizontalOptions="FillAndExpand"  Grid.Column="1"/>
+      </Grid>      
+      
+      <Grid>
+          <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Button Text="Activate Key0" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnActivateKey0ButtonCommand}" HorizontalOptions="FillAndExpand"  Grid.Column="0"/>
+          <Button Text="Activate Key1" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnActivateKey1ButtonCommand}" HorizontalOptions="FillAndExpand"  Grid.Column="1"/>
+      </Grid>
 
-      <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
-        <Button Text="Untraceable" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnUntraceableButtonCommand}" />
-      </StackLayout>
-
-      <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
-        <Button Text="Authenticate" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnAuthenticateButtonCommand}" />
-      </StackLayout>
-
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button Text="TAM1 authenticate" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnAuthenticateTAM1ButtonCommand}" HorizontalOptions="FillAndExpand"  Grid.Column="0"/>
+        <Button Text="TAM2 authenticate" Font="Large" BackgroundColor="#C3C3C3" Command="{Binding OnAuthenticateTAM2ButtonCommand}" HorizontalOptions="FillAndExpand"  Grid.Column="1"/>
+    </Grid>
+      
     </StackLayout>
   </ScrollView>
 </pages:BasePage>

@@ -185,7 +185,8 @@ namespace BLE.Client.Pages
         public async void btnCSLCloudClicked(object sender, EventArgs e)
         {
             switchhttpProtocol.IsToggled = false;
-            entryServerIP.Text = "https://www.convergence.com.hk:29090/WebServiceRESTs/1.0/req";
+            //entryServerIP.Text = "https://www.convergence.com.hk:29090/WebServiceRESTs/1.0/req";
+            entryServerIP.Text = "https://democloud.convergence.com.hk:29090/WebServiceRESTs/1.0/req";
         }
 
         public async void entryInventoryDelayCompleted(object sender, EventArgs e)

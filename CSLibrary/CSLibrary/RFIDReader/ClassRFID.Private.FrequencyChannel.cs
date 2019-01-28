@@ -941,18 +941,14 @@ namespace CSLibrary
             921.25,
             921.75,
             922.25,
-            922.75,
-            923.25,
         };
 
         private uint[] mysFreqTable = new uint[]
         {
             0x00180E5F, /*919.75MHz   */
             0x00180E65, /*921.25MHz   */
-            0x00180E6B, /*922.75MHz   */
             0x00180E61, /*920.25MHz   */
             0x00180E67, /*921.75MHz   */
-            0x00180E6D, /*923.25MHz   */
             0x00180E63, /*920.75MHz   */
             0x00180E69, /*922.25MHz   */
         };
@@ -960,10 +956,10 @@ namespace CSLibrary
         /// <summary>
         /// Malaysia Frequency Channel number
         /// </summary>
-        private const uint MYS_CHN_CNT = 8;
+        private const uint MYS_CHN_CNT = 6;
         private readonly uint[] mysFreqSortedIdx = new uint[]{
-                                                    0, 3, 6, 1,
-                                                    4, 7, 2, 5,
+                                                    0, 3, 1,
+                                                    4, 2, 5,
                                                     };
 
         #endregion
@@ -1798,21 +1794,21 @@ namespace CSLibrary
             916.3,
             917.5,
             918.7,
-            919.9,
+            //919.9,
         };
         private uint[] etsiupperbandFreqTable = new uint[]
         {
             0x003C23CB, /*916.3 MHz   */
             0x003C23D7, /*917.5 MHz   */
             0x003C23E3, /*918.7 MHz   */
-            0x003C23EF, /*919.9 MHz   */
+            //0x003C23EF, /*919.9 MHz   */
         };
         /// <summary>
         /// Brazil1 Frequency Channel number
         /// </summary>
-        private const uint ETSIUPPERBAND_CHN_CNT = 4;
+        private const uint ETSIUPPERBAND_CHN_CNT = 3;
         private readonly uint[] etsiupperbandFreqSortedIdx = new uint[]{
-            0, 1, 2, 3
+            0, 1, 2//, 3
         };
 
         #endregion
