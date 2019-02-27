@@ -20,6 +20,8 @@ namespace BLE.Client.ViewModels
         public ICommand OnPhaseChannelInventoryButtonCommand { protected set; get; }
         public ICommand OnPeriodicReadButtonCommand { protected set; get; }
         public ICommand OnUCODEDNAButtonCommand { protected set; get; }
+        public ICommand OnRFMicroButtonCommand { protected set; get; }
+
 
         public ViewModelSpecialFunctionsMenu (IAdapter adapter, IUserDialogs userDialogs) : base(adapter)
         {
@@ -29,6 +31,7 @@ namespace BLE.Client.ViewModels
             OnPhaseChannelInventoryButtonCommand = new Command(OnPhaseChannelInventoryButtonClicked);
             OnPeriodicReadButtonCommand = new Command(OnPeriodicReadButtonClicked);
             OnUCODEDNAButtonCommand = new Command(OnUCODEDNAButtonClicked);
+            OnRFMicroButtonCommand = new Command(OnRFMicroButtonClicked);
         }
 
         void OnMultiBankInventoryButtonClicked()
@@ -49,6 +52,11 @@ namespace BLE.Client.ViewModels
         void OnUCODEDNAButtonClicked()
         {
             ShowViewModel<ViewModelUCODEDNA>(new MvxBundle());
+        }
+
+        void OnRFMicroButtonClicked()
+        {
+            ShowViewModel<ViewModelRFMicroInventory>(new MvxBundle());
         }
 
     }

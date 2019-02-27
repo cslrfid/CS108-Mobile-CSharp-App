@@ -89,8 +89,8 @@ namespace BLE.Client.Pages
                 epcWordLen = HexVal(entryPC.Text.Substring(0, 1)) << 1;
                 epcWordLen |= HexVal(entryPC.Text.Substring(1, 1)) >> 3;
 
-                _EPCLength = epcWordLen * 4;
-
+                _EPCLength = epcWordLen * 4; 
+                 
                 labelEPCLength.Text = "EPC Length " + (epcWordLen * 16).ToString() + " bits";
             }
             catch (Exception ex)
@@ -109,6 +109,11 @@ namespace BLE.Client.Pages
                 entryPC.Text += "0000".Remove(4-entryPC.Text.Length);
 
             onentryEPCTextChanged(sender, e);
+
+            await DisplayAlert("Changing EPC Length will automatically modify to " + (_EPCLength * 4).ToString() + " bits", "", null, "OK");
+
+            if (editorSelectedEPC.Text.Length > _EPCLength)
+                editorSelectedEPC.Text = editorSelectedEPC.Text.Substring(0, _EPCLength);
         }
 
         public async void onentryEPCTextChanged(object sender, EventArgs e)
@@ -138,5 +143,11 @@ namespace BLE.Client.Pages
                 entryEPC.Focus();
             }
         }
+
+        public async void onentryTemperatureCodeTextChanged(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }
