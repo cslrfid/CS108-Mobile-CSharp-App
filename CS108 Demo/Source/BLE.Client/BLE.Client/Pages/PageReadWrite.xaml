@@ -8,10 +8,8 @@
   <ScrollView>
     <StackLayout Padding="5, 3, 5, 0">
 
-      <StackLayout Orientation="Horizontal">
-        <Label Text="Selected EPC" WidthRequest="70" />
-		    <Editor Text="{ Binding entrySelectedEPC, Mode=TwoWay }" HorizontalOptions="FillAndExpand" />
-      </StackLayout>
+      <Label Text="Selected EPC"/>
+      <Editor x:Name="editorSelectedEPC" Text="{ Binding entrySelectedEPC, Mode=TwoWay }" HorizontalOptions="FillAndExpand" HeightRequest="80"/>
 
       <StackLayout Orientation="Horizontal">
         <Label Text="Access PWD" WidthRequest="70" />
@@ -32,24 +30,22 @@
       <StackLayout Orientation="Horizontal">
         <Switch IsToggled="{Binding switchEPCIsToggled, Mode=TwoWay }" />
         <Label Text="EPC" WidthRequest="80" VerticalOptions="Center" />
+        <Label Text="{ Binding labelEPCStatus }" WidthRequest="30" HorizontalOptions="End" VerticalOptions="Center" />
       </StackLayout>
 
-      <StackLayout Orientation="Horizontal">
-        <Entry x:Name="entryEPC" Text="{ Binding entryEPC, Mode=TwoWay }" TextChanged="onentryEPCTextChanged" HorizontalOptions="FillAndExpand" Unfocused="onentryEPCUnfocused" />
-        <Label Text="{ Binding labelEPCStatus }" WidthRequest="30" HorizontalOptions="End" VerticalOptions="Center" />		
-      </StackLayout>
-
+      <Editor x:Name="entryEPC" Text="{ Binding entryEPC, Mode=TwoWay }" TextChanged="onentryEPCTextChanged" Unfocused="onentryEPCUnfocused" HorizontalOptions="FillAndExpand" HeightRequest="80"/>
+            
       <StackLayout Orientation="Horizontal">
         <Switch IsToggled="{Binding switchACCPWDIsToggled, Mode=TwoWay }" />
         <Label Text="ACC PWD" WidthRequest="80" VerticalOptions="Center" />
-		    <Entry x:Name="entryACCPWD" Text="{ Binding entryACCPWD, Mode=TwoWay }" HorizontalOptions="FillAndExpand" Focused="InputACCPWDFocused" Unfocused="InputUnfocused" />
+	    <Entry x:Name="entryACCPWD" Text="{ Binding entryACCPWD, Mode=TwoWay }" HorizontalOptions="FillAndExpand" Focused="InputACCPWDFocused" Unfocused="InputUnfocused" />
         <Label Text="{ Binding labelACCPWDStatus }" WidthRequest="30" HorizontalOptions="End" VerticalOptions="Center" />		
       </StackLayout> 
         
       <StackLayout Orientation="Horizontal">
         <Switch IsToggled="{Binding switchKILLPWDIsToggled, Mode=TwoWay }" />
         <Label Text="KILL PWD" WidthRequest="80" VerticalOptions="Center" />
-		    <Entry x:Name="entryKILLPWD" Text="{ Binding entryKILLPWD, Mode=TwoWay }" HorizontalOptions="FillAndExpand" Focused="InputFocused" Unfocused="InputUnfocused" />
+	    <Entry x:Name="entryKILLPWD" Text="{ Binding entryKILLPWD, Mode=TwoWay }" HorizontalOptions="FillAndExpand" Focused="InputFocused" Unfocused="InputUnfocused" />
         <Label Text="{ Binding labelKILLPWDStatus }" WidthRequest="30" HorizontalOptions="End" VerticalOptions="Center" />		
       </StackLayout> 
         

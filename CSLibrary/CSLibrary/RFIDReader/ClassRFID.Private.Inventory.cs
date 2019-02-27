@@ -110,8 +110,10 @@ namespace CSLibrary
             // Set MultiBanks Info
             MacReadRegister(MACREGISTER.HST_INV_CFG, ref Value);
 
-            Value &= 0xfff4fcff;
+            Value &= 0xfff0fcff;
+
             Value |= (1 << 18); // enable CRC checking
+
             if (m_rdr_opt_parms.TagRanging.multibanks != 0)
                 Value |= (m_rdr_opt_parms.TagRanging.multibanks & (uint)0x03) << 16;
 

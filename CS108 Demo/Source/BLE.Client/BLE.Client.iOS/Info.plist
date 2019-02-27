@@ -25,7 +25,7 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.12</string>
+	<string>2.0.13</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Only for testing, we don&apos;t need the data to do anything</string>
 	<key>UIApplicationExitsOnSuspend</key>
@@ -54,6 +54,6 @@
 		<true/>
 	</dict>
 	<key>CFBundleVersion</key>
-	<string>152</string>
+	<string>158</string>
 </dict>
 </plist>
