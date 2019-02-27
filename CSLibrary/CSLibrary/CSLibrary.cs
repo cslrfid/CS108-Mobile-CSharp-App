@@ -193,6 +193,8 @@ namespace CSLibrary
         /// <param name="packetData"></param>
         public bool ProcessAPIPacket (byte [] data)
         {
+            CSLibrary.Debug.WriteLine("Routine : ProcessAPIPacket");
+
             switch (data[3])
             {
                 case 0xc2:
@@ -270,6 +272,8 @@ namespace CSLibrary
 
 		internal CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE RecvRFIDPacket(byte[] recvData)
         {
+            CSLibrary.Debug.WriteLine("Routine : RecvRFIDPacket");
+
             UInt16 eventCode = (UInt16)((UInt16)recvData[8] << 8 | (UInt16)recvData[9]);
 
             switch (eventCode)

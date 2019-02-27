@@ -367,5 +367,43 @@ namespace CSLibrary.Tools
                 return;
             }
         }
+
+        public int TrimRFIDPacket (int mode)
+        {
+            // delete data
+            lock (_dataStreamLock)
+            {
+                int index;
+
+                Defragment();
+
+                // find new pkt_ver
+                for (index = 1; index < _dataStreamSize; index++)
+                {
+                    if (mode == 0)
+                    {
+                        if (_dataStream[index] == 0x00 || _dataStream[index] == 0x40 || _dataStream[index] == 0x70)
+                            break;
+                    }
+                    else
+                    {
+                        if ((_dataStream[index] >= 0x01 && _dataStream[index] <= 0x04) || _dataStream[index] == 0x40)
+                            break;
+                    }
+                }
+
+                if (index == _dataStreamSize)
+                {
+                    _dataStreamSize = 0;
+                }
+                else
+                {
+                    _dataStreamStartPoint = index;
+                    _dataStreamSize -= index;
+                }
+            }
+
+            return -1;
+        }
     }
 }

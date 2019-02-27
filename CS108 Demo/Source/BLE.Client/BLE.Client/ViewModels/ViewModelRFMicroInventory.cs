@@ -240,20 +240,15 @@ namespace BLE.Client.ViewModels
                 RaisePropertyChanged(() => switchRSSI_TempToggled);
                 RaisePropertyChanged(() => Col2Label);
 
-                if (switchRSSI_TempToggled) // flase = RSSI, true = Temp
-                {
-                    // Temp
-                    extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.ASLINVA_DSLINVB, 0);
-                    extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xe0, 0, new byte[] { 0x00 });
-                    BleMvxApplication._reader.rfid.SetSelectCriteria(1, extraSlecetion);
-                }
-                else
-                {
-                    // OC RSSI
-                    extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.NOTHING_DSLINVB, 0);
-                    extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xd0, 8, new byte[] { 0x20 });
-                    BleMvxApplication._reader.rfid.SetSelectCriteria(1, extraSlecetion);
-                }
+                // Temp
+                extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.ASLINVA_DSLINVB, 0);
+                extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xe0, 0, new byte[] { 0x00 });
+                BleMvxApplication._reader.rfid.SetSelectCriteria(1, extraSlecetion);
+
+                // OC RSSI
+                extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.NOTHING_DSLINVB, 0);
+                extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xd0, 8, new byte[] { 0x20 });
+                BleMvxApplication._reader.rfid.SetSelectCriteria(2, extraSlecetion);
             }
 
 
@@ -390,16 +385,11 @@ namespace BLE.Client.ViewModels
                     {
                         if (TagInfoList[cnt].EPC == info.epc.ToString())
                         {
-                            TagInfoList[cnt].Bank2Data = CSLibrary.Tools.Hex.ToString(info.Bank2Data);
-                            if (_switchRSSI_TempToggled)
+                            TagInfoList[cnt].Bank1Data = info.Bank1Data[0].ToString();
                             {
                                 UInt64 caldata = (UInt64)(((UInt64)info.Bank2Data[0] << 48) | ((UInt64)info.Bank2Data[1] << 32) | ((UInt64)info.Bank2Data[2] << 16) | ((UInt64)info.Bank2Data[3]));
-                                TagInfoList[cnt].Bank1Data = Math.Round(getTemperatue(info.Bank1Data[1], caldata), 2).ToString();
-
-                                //TagInfoList[cnt].Bank1Data = info.Bank1Data[0].ToString();
+                                TagInfoList[cnt].Bank2Data = Math.Round(getTemperatue(info.Bank1Data[1], caldata), 2).ToString();
                             }
-                            else
-                                TagInfoList[cnt].Bank1Data = info.Bank1Data[0].ToString();
 
                             found = true;
                             break;
@@ -411,16 +401,11 @@ namespace BLE.Client.ViewModels
                         TagInfoViewModel item = new TagInfoViewModel();
 
                         item.EPC = info.epc.ToString();
-                        item.Bank2Data = CSLibrary.Tools.Hex.ToString(info.Bank2Data);
-                        if (_switchRSSI_TempToggled)
+                        item.Bank1Data = info.Bank1Data[0].ToString();
                         {
                             UInt64 caldata = (UInt64)(((UInt64)info.Bank2Data[0] << 48) | ((UInt64)info.Bank2Data[1] << 32) | ((UInt64)info.Bank2Data[2] << 16) | ((UInt64)info.Bank2Data[3]));
-                            item.Bank1Data = Math.Round(getTemperatue(info.Bank1Data[1], caldata), 2).ToString();
-
-                            //item.Bank1Data = info.Bank1Data[0].ToString();
+                            item.Bank2Data = Math.Round(getTemperatue(info.Bank1Data[1], caldata), 2).ToString();
                         }
-                        else
-                            item.Bank1Data = info.Bank1Data[0].ToString();
 
                         TagInfoList.Insert(0, item);
 

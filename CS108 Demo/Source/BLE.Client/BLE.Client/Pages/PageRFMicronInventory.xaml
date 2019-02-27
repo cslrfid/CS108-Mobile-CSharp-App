@@ -13,13 +13,13 @@
         <StackLayout Padding="10,5,0,5" BackgroundColor="#cccccc">
           <Grid>
             <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="0.65*" />
-              <ColumnDefinition Width="0.225*" />
-              <ColumnDefinition Width="0.125*" />
+              <ColumnDefinition Width="0.7*" />
+              <ColumnDefinition Width="0.15*" />
+              <ColumnDefinition Width="0.15*" />
             </Grid.ColumnDefinitions>
             <Label Text="EPC" VerticalTextAlignment="Center" FontSize="Small" />
-            <Label Grid.Column="1" Text="Cal Data" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" FontSize="Small" />
-            <Label Grid.Column="2" Text="{Binding Col2Label}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" FontSize="Small" />
+            <Label Grid.Column="1" Text="OC RSSI" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" FontSize="Small" />
+            <Label Grid.Column="2" Text="Temp." VerticalTextAlignment="Center" HorizontalTextAlignment="Start" FontSize="Small" />
           </Grid>
         </StackLayout>
       </ListView.Header>
@@ -30,13 +30,13 @@
             <StackLayout Orientation="Vertical">
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="0.65*" />
-                  <ColumnDefinition Width="0.225*" />
-                  <ColumnDefinition Width="0.125*" />
+                  <ColumnDefinition Width="0.7*" />
+                  <ColumnDefinition Width="0.15*" />
+                  <ColumnDefinition Width="0.15*" />
                 </Grid.ColumnDefinitions>
                 <Label Text="{Binding EPC}" VerticalTextAlignment="Center" FontSize="Small" />
-                <Label Grid.Column="1" Text="{Binding Bank2Data}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" />
-                <Label Grid.Column="2" Text="{Binding Bank1Data}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" />
+                <Label Grid.Column="1" Text="{Binding Bank1Data}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" />
+                <Label Grid.Column="2" Text="{Binding Bank2Data}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" />
               </Grid>
             </StackLayout>
           </ViewCell>
@@ -46,12 +46,6 @@
     </ListView>
 
     <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand" >
-
-      <StackLayout Orientation="Horizontal">
-        <Label Text="OC RSSI" WidthRequest="80" VerticalOptions="Center" />
-        <Switch IsToggled="{Binding switchRSSI_TempToggled, Mode=TwoWay }" />
-        <Label Text="Temp" WidthRequest="80" VerticalOptions="Center" />
-      </StackLayout>
 
       <Button Text= "{Binding startInventoryButtonText}" Font="Large" Command="{Binding OnStartInventoryButtonCommand}" />
       <Button Text="Clear" Font="Large" Command="{Binding OnClearButtonCommand}" />

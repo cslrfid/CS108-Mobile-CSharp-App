@@ -188,6 +188,22 @@ namespace CSLibrary
             return true;
         }
 
+        static readonly byte[] RFIDCommand = new byte[] { 0xA7, 0xB3, 0x0A, 0xC2, 0x82, 0x37, 0x00, 0x00, 0x80, 0x02, 0x70, 0x01, 0x00, 0xF0 };
+        bool CheckRFIDCommand()
+        {
+            // A7 B3 0A C2 82 37 00 00 80 02 70 01 00 F0       0F 00 00 00
+            if (_sendBuffer[0].packetData.Length != 18)
+                return false;
+
+            for (int index = 0; index < RFIDCommand.Length; index ++)
+                if (_sendBuffer[0].packetData[index] != RFIDCommand[index])
+                    return false;
+
+            _handlerRFIDReader._readerMode = 1; // record reader static to command mode
+
+            return true;
+        }
+
         async void BLERWEngineTimer()
         {
             await Task.Delay(10);
@@ -196,7 +212,6 @@ namespace CSLibrary
             {
                 if (_readerState != READERSTATE.DISCONNECT)
                 {
-
                     if (_NeedCommandResponseType != BTWAITCOMMANDRESPONSETYPE.NOWAIT)
                     {
                         CSLibrary.Debug.WriteLine("wait response : " + _NeedCommandResponseType.ToString() + ":" + _currentCommandResponse);
@@ -265,6 +280,7 @@ namespace CSLibrary
                             _currentCommandResponse = BTWAITCOMMANDRESPONSETYPE.NOWAIT;
                             _currentCmdRemark = _sendBuffer[0].cmdRemark;
                             _NeedCommandResponseType = _sendBuffer[0].dataRemark;
+                            CheckRFIDCommand();
                             BLE_Send(_sendBuffer[0].packetData);
                             _packetDelayTimeout = DateTime.Now;
                             _packetResponseTimeout = DateTime.Now.AddSeconds(2);
