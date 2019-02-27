@@ -122,7 +122,7 @@ namespace CSLibrary
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("BLE Data Error");
+                Debug.WriteLine("Program execption error, please check!!!");
             }
         }
 

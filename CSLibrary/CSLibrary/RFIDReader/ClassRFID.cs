@@ -15,6 +15,9 @@ namespace CSLibrary
     public partial class RFIDReader
     {
         #region public variable
+
+        internal int _readerMode = 0;
+
         #region ====================== Callback Event Handler ======================
         /// <summary>
         /// Reader Operation State Event
@@ -209,6 +212,8 @@ namespace CSLibrary
 
         Single R2000_RssiTranslation(byte rawValue)
         {
+            CSLibrary.Debug.WriteLine("Routine : R2000_RssiTranslation");
+
             int iMantissa = rawValue & 0x07;
             int iExponent = (rawValue >> 3) & 0x1F;
 
@@ -218,6 +223,8 @@ namespace CSLibrary
 
         bool R2000Packet_NewInventory(byte[] recvData, int offset = 0)
         {
+            CSLibrary.Debug.WriteLine("Routine : R2000Packet_NewInventory");
+
             if (OnAsyncCallback != null)
             {
                 uint newInventoryPacketOffset = 8;
@@ -588,36 +595,108 @@ namespace CSLibrary
             _dataBuffer.Clear();
         }
 
+        public bool CheckValidRFIDPacket(ref byte [] packetHeader)
+        {
+            byte pkt_ver = packetHeader[0];
+            byte flags = packetHeader[1];
+            UInt16 pkt_type = (UInt16)((packetHeader[3] << 8 | packetHeader[2]) & 0x7fff);
+            UInt16 pkt_len = (UInt16)(packetHeader[5] << 8 | packetHeader[4]);
+            UInt16 reserved = (UInt16)(packetHeader[7] << 8 | packetHeader[6]);
 
-#if !oldcode
-		/// <summary>
-		/// Transfer BT API packet to R2000 packet
-		/// </summary>
-		/// <param name="recvData"></param>
-		/// <param name="offset"></param>
-		/// <param name="size"></param>
-		internal CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE DeviceRecvData(byte[] recvData1, HighLevelInterface.BTWAITCOMMANDRESPONSETYPE currentCommandResponse)
-		{
-			if (!_dataBuffer.DataIn(recvData1, 10, recvData1[2] - 2))
+            // Abort Command
+            if ((pkt_ver == 0x40) && (flags == 0x03) && (pkt_type == 0x7cbf) && (pkt_len == 0xfcbf) && (reserved == 0xfcbf))
+                return true;
+
+            if (_readerMode == 0)
+            {
+                // Idle mode
+
+                // Read Mac Register packet
+                if ((pkt_ver == 0x70 || pkt_ver == 0x00) && (flags == 0x00))
+                    return true;
+            }
+            else
+            {
+                // Command mode
+
+                // Command-Begin Packet
+                if ((pkt_ver == 0x01 || pkt_ver == 0x02) && (pkt_type == 0x0000) && (pkt_len == 0x02) && (reserved == 0x0000))
+                    return true;
+
+                // Command-End Packet 
+                if ((pkt_ver == 0x01 || pkt_ver == 0x02) && (flags == 0x00) && (pkt_type == 0x0001) && (pkt_len == 0x02) && (reserved == 0x0000))
+                    return true;
+
+                // OEM Configuration Read Packet
+                if ((pkt_ver == 0x01) && (flags == 0x00) && (pkt_type == 0x3007) && (pkt_len == 0x0002))
+                    return true;
+
+                // Inventory-Response Packet 
+                if ((pkt_ver == 0x03) && (pkt_type == 0x0005) && (reserved == 0x0000))
+                    return true;
+
+                // Inventory-Response Packet (Compact mode)
+                if ((pkt_ver == 0x04) && (pkt_type == 0x0005) && (reserved == 0x0000))
+                    return true;
+
+                // Tag-Access Packet 
+                if ((pkt_ver == 0x01) && (pkt_type == 0x0006) && (reserved == 0x0000))
+                    return true;
+
+                // Antenna-Cycle-End Packet
+                if ((pkt_ver == 0x01 || pkt_ver == 0x02) && (flags == 0x00) && (pkt_type == 0x0007) && (pkt_len == 0x0000) && (reserved == 0x0000))
+                    return true;
+
+                // LBT-Jam-Detected Packet 
+                if ((pkt_ver == 0x01 || pkt_ver == 0x02) && (flags == 0x00) && (pkt_type == 0x0008) && (pkt_len == 0x0001))
+                    return true;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Transfer BT API packet to R2000 packet
+        /// </summary>
+        /// <param name="recvData"></param>
+        /// <param name="offset"></param>
+        /// <param name="size"></param>
+        internal CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE DeviceRecvData(byte[] recvData1, HighLevelInterface.BTWAITCOMMANDRESPONSETYPE currentCommandResponse)
+        {
+            CSLibrary.Debug.WriteLine("Routine : DeviceRecvData");
+
+            if (!_dataBuffer.DataIn(recvData1, 10, recvData1[2] - 2))
                 CSLibrary.Debug.WriteLine("RFID ring buffer FULL!!!!");
-			CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE result = HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.NOWAIT;
 
-			while (_dataBuffer.length >= 8 )
-			{
-				byte[] recvData = _dataBuffer.DataPreOut(8);
+            CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE result = HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.NOWAIT;
 
-				// first packet
-				byte header = recvData[0];
+            while (_dataBuffer.length >= 8)
+            {
+                byte[] recvData = _dataBuffer.DataPreOut(8);
 
-				switch (header)
-				{
+                if (!CheckValidRFIDPacket(ref recvData))
+                {
+                    // drop packet if not is valid RFID packet
+                    _dataBuffer.TrimRFIDPacket(_readerMode);
+                    continue;
+                }
+
+                // first packet
+                byte header = recvData[0];
+
+                CSLibrary.Debug.WriteLine("packet type :0x{0}", header.ToString("X2"));
+                switch (header)
+                {
                     default:
                         _dataBuffer.Clear();
-                        CSLibrary.Debug.WriteLine("Can not handle R2000 packet type :0x", header.ToString("X2"));
+                        CSLibrary.Debug.WriteLine("Can not handle R2000 packet type :0x{0}", header.ToString("X2"));
                         break;
                     case 0x40:  // Abort packet
-						{
-							//result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA2 | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.BTAPIRESPONSE;
+                        {
+                            _readerMode = 0; // record reader status to idle mode
+
+                            //result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA2 | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.BTAPIRESPONSE;
                             result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA2;
                             result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.BTAPIRESPONSE;
                             result = result | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA2 | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.BTAPIRESPONSE;
@@ -627,19 +706,19 @@ namespace CSLibrary
                         }
                         break;
 
-					case 0x00:
-					case 0x70:  // register read packet
-						{
-							UInt16 add = (UInt16)(recvData[3] << 8 | recvData[2]);
-							UInt32 data = (UInt32)(recvData[7] << 24 | recvData[6] << 16 | recvData[5] << 8 | recvData[4]);
+                    case 0x00:
+                    case 0x70:  // register read packet
+                        {
+                            UInt16 add = (UInt16)(recvData[3] << 8 | recvData[2]);
+                            UInt32 data = (UInt32)(recvData[7] << 24 | recvData[6] << 16 | recvData[5] << 8 | recvData[4]);
 
                             SaveMacRegister(add, data);
 
                             result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
 
-							_dataBuffer.DataDel(8);
-						}
-						break;
+                            _dataBuffer.DataDel(8);
+                        }
+                        break;
 
                     case 0x04:  // New Inventory Packet
 
@@ -647,6 +726,7 @@ namespace CSLibrary
 
                         // only valid on inventory compact mode
                         //if ((Operation)(_deviceHandler._currentCmdRemark) == Operation.TAG_RANGING)
+
                         {
                             int pkt_type = BitConverter.ToUInt16(recvData, 2) & 0x7fff;
                             int packetLen = BitConverter.ToUInt16(recvData, 4) + 8;
@@ -669,28 +749,30 @@ namespace CSLibrary
                         }
                         break;
 
-					    case 0x01:
-                        case 0x02:
-                        case 0x03:
+                    case 0x01:
+                    case 0x02:
+                    case 0x03:
                         {
                             int pkt_type = BitConverter.ToUInt16(recvData, 2) & 0x7fff;
-							int packetLen = BitConverter.ToUInt16(recvData, 4) * 4 + 8;
+                            int packetLen = BitConverter.ToUInt16(recvData, 4) * 4 + 8;
 
-							if (packetLen > _dataBuffer.length)
-								return result;
+                            if (packetLen > _dataBuffer.length)
+                                return result;
 
-							switch (pkt_type)
-							{
-								default:
-									_dataBuffer.DataDel(packetLen);
-									break;
+                            switch (pkt_type)
+                            {
+                                default:
+                                    _dataBuffer.DataDel(packetLen);
+                                    break;
 
-								case 0x0000:    // Command begin Packet
-									_dataBuffer.DataDel(packetLen);
-									break;
+                                case 0x0000:    // Command begin Packet
+                                    _dataBuffer.DataDel(packetLen);
+                                    break;
 
-								case 0x0001:    // Command end Packet
-									result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.COMMANDENDRESPONSE;
+                                case 0x0001:    // Command end Packet
+                                    _readerMode = 0; // record reader status to idle mode
+
+                                    result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.COMMANDENDRESPONSE;
                                     //_dataBuffer.DataDel(packetLen);
                                     {
                                         byte[] packetData = _dataBuffer.DataOut(packetLen);
@@ -700,10 +782,10 @@ namespace CSLibrary
                                     // Check Tag access packet
                                     // if ((currentCommandResponse | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0)
                                     {
-										Operation RealCurrentOperation = (Operation)(_deviceHandler._currentCmdRemark);
+                                        Operation RealCurrentOperation = (Operation)(_deviceHandler._currentCmdRemark);
 
-										switch (RealCurrentOperation)
-										{
+                                        switch (RealCurrentOperation)
+                                        {
                                             case CSLibrary.Constants.Operation.TAG_READ:
                                                 {
                                                     FireAccessCompletedEvent(
@@ -716,70 +798,70 @@ namespace CSLibrary
                                                 break;
 
                                             case CSLibrary.Constants.Operation.TAG_READ_PC:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.PC,
-														CSLibrary.Constants.TagAccess.READ,
-														m_rdr_opt_parms.TagReadPC.pc));
-												}
-												break;
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.PC,
+                                                        CSLibrary.Constants.TagAccess.READ,
+                                                        m_rdr_opt_parms.TagReadPC.pc));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_READ_EPC:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														Bank.EPC,
-														TagAccess.READ,
-														m_rdr_opt_parms.TagReadEPC.epc));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_READ_EPC:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.EPC,
+                                                        TagAccess.READ,
+                                                        m_rdr_opt_parms.TagReadEPC.epc));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_READ_ACC_PWD:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.ACC_PWD,
-														CSLibrary.Constants.TagAccess.READ,
-														m_rdr_opt_parms.TagReadAccPwd.password));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_READ_ACC_PWD:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.ACC_PWD,
+                                                        CSLibrary.Constants.TagAccess.READ,
+                                                        m_rdr_opt_parms.TagReadAccPwd.password));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_READ_KILL_PWD:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.KILL_PWD,
-														CSLibrary.Constants.TagAccess.READ,
-														m_rdr_opt_parms.TagReadKillPwd.password));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_READ_KILL_PWD:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.KILL_PWD,
+                                                        CSLibrary.Constants.TagAccess.READ,
+                                                        m_rdr_opt_parms.TagReadKillPwd.password));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_READ_TID:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.TID,
-														CSLibrary.Constants.TagAccess.READ,
-														m_rdr_opt_parms.TagReadTid.tid));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_READ_TID:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.TID,
+                                                        CSLibrary.Constants.TagAccess.READ,
+                                                        m_rdr_opt_parms.TagReadTid.tid));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_READ_USER:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														Bank.USER,
-														TagAccess.READ,
-														m_rdr_opt_parms.TagReadUser.pData));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_READ_USER:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.USER,
+                                                        TagAccess.READ,
+                                                        m_rdr_opt_parms.TagReadUser.pData));
+                                                }
+                                                break;
 
                                             case CSLibrary.Constants.Operation.TAG_WRITE:
                                                 {
@@ -793,72 +875,72 @@ namespace CSLibrary
                                                 break;
 
                                             case CSLibrary.Constants.Operation.TAG_WRITE_PC:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.PC,
-														CSLibrary.Constants.TagAccess.WRITE,
-														m_rdr_opt_parms.TagReadPC.pc));
-												}
-												break;
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.PC,
+                                                        CSLibrary.Constants.TagAccess.WRITE,
+                                                        m_rdr_opt_parms.TagReadPC.pc));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_WRITE_EPC:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														Bank.EPC,
-														CSLibrary.Constants.TagAccess.WRITE,
-														m_rdr_opt_parms.TagReadEPC.epc));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_WRITE_EPC:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.EPC,
+                                                        CSLibrary.Constants.TagAccess.WRITE,
+                                                        m_rdr_opt_parms.TagReadEPC.epc));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_WRITE_ACC_PWD:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.ACC_PWD,
-														CSLibrary.Constants.TagAccess.WRITE,
-														m_rdr_opt_parms.TagReadAccPwd.password));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_WRITE_ACC_PWD:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.ACC_PWD,
+                                                        CSLibrary.Constants.TagAccess.WRITE,
+                                                        m_rdr_opt_parms.TagReadAccPwd.password));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_WRITE_KILL_PWD:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														CSLibrary.Constants.Bank.KILL_PWD,
-														CSLibrary.Constants.TagAccess.WRITE,
-														m_rdr_opt_parms.TagReadKillPwd.password));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_WRITE_KILL_PWD:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        CSLibrary.Constants.Bank.KILL_PWD,
+                                                        CSLibrary.Constants.TagAccess.WRITE,
+                                                        m_rdr_opt_parms.TagReadKillPwd.password));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_WRITE_USER:
-												{
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														Bank.USER,
-														CSLibrary.Constants.TagAccess.WRITE,
-														m_rdr_opt_parms.TagReadUser.pData));
-												}
-												break;
+                                            case CSLibrary.Constants.Operation.TAG_WRITE_USER:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.USER,
+                                                        CSLibrary.Constants.TagAccess.WRITE,
+                                                        m_rdr_opt_parms.TagReadUser.pData));
+                                                }
+                                                break;
 
-											case CSLibrary.Constants.Operation.TAG_LOCK:
-												{
-													CSLibrary.Debug.WriteLine("Tag lock end {0}", currentCommandResponse);
+                                            case CSLibrary.Constants.Operation.TAG_LOCK:
+                                                {
+                                                    CSLibrary.Debug.WriteLine("Tag lock end {0}", currentCommandResponse);
 
-													FireAccessCompletedEvent(
-														new OnAccessCompletedEventArgs(
-														(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-														Bank.UNKNOWN,
-														TagAccess.LOCK,
-														null));
-												}
-												break;
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.UNKNOWN,
+                                                        TagAccess.LOCK,
+                                                        null));
+                                                }
+                                                break;
 
                                             case CSLibrary.Constants.Operation.TAG_UNTRACEABLE:
                                                 {
@@ -876,27 +958,27 @@ namespace CSLibrary
                                         }
                                     }
 
-									FireStateChangedEvent(CSLibrary.Constants.RFState.IDLE);
-									break;
+                                    FireStateChangedEvent(CSLibrary.Constants.RFState.IDLE);
+                                    break;
 
-								case 0x0005:    /// inventory packet
+                                case 0x0005:    /// inventory packet
 									{
                                         InventoryDebug.InventoryPackerCountInc();
 
                                         byte[] packetData = _dataBuffer.DataOut(packetLen);
 
-										R2000Packet_Inventory(packetData);
-									}
-									break;
+                                        R2000Packet_Inventory(packetData);
+                                    }
+                                    break;
 
-								case 0x0006:    // Tag access Packet
-									{
-										byte[] packetData = _dataBuffer.DataOut(packetLen);
+                                case 0x0006:    // Tag access Packet
+                                    {
+                                        byte[] packetData = _dataBuffer.DataOut(packetLen);
 
-										if (R2000Packet_TagAccess(packetData))
-											result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
-									}
-									break;
+                                        if (R2000Packet_TagAccess(packetData))
+                                            result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
+                                    }
+                                    break;
 
                                 case 0x0007:    // Antenna-Cycle-End Packet
                                     {
@@ -924,434 +1006,12 @@ namespace CSLibrary
                                     break;
                             }
                         }
-						break;
-					}
-				}
-
-			return result;
-		}
-
-#else
-
-		byte[] _RingBuffer = new byte [100];
-        int _RingBufferDataSize = 0;
-
-		/// <summary>
-		/// Transfer BT API packet to R2000 packet
-		/// </summary>
-		/// <param name="recvData"></param>
-		/// <param name="offset"></param>
-		/// <param name="size"></param>
-		public CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE DeviceRecvData(byte[] recvData1, HighLevelInterface.BTWAITCOMMANDRESPONSETYPE currentCommandResponse)
-        {
-            Array.Copy(recvData1, 10, _RingBuffer, _RingBufferDataSize, recvData1[2] - 2);
-            _RingBufferDataSize += recvData1[2] - 2;
-
-			CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE result = HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.NOWAIT;
-
-            byte[] recvData = _RingBuffer;
-			int offset = 0;   // packet header
-
-            while (offset < (_RingBufferDataSize - 7))
-			{
-				if (_dataBuffer.length == 0)
-				{
-					// first packet
-					byte header = recvData[offset];
-
-					switch (header)
-					{
-						case 0x40:  // Abort packet
-							{
-								result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA2;
-								offset += 8;
-							}
-							break;
-
-						case 0x00:
-						case 0x70:  // register read packet
-							{
-								UInt16 add = (UInt16)(recvData[offset + 3] << 8 | recvData[offset + 2]);
-								UInt32 data = (UInt16)(recvData[offset + 7] << 24 | recvData[offset + 6] << 16 | recvData[offset + 5] << 8 | recvData[offset + 4]);
-
-								_registerData[add] = data;
-
-								result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
-							}
-
-							offset += 8;
-							break;
-
-						default:
-							{
-								int pkt_type = BitConverter.ToUInt16(recvData, offset + 2) & 0x7fff;
-								int packetLen = BitConverter.ToUInt16(recvData, offset + 4) * 4 + 8;
-
-								switch (pkt_type)
-								{
-									default:
-										offset = _RingBufferDataSize;
-										break;
-
-									case 0x0000:    // Command begin Packet
-										offset += packetLen;
-										break;
-
-									case 0x0001:    // Command end Packet
-										result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.COMMANDENDRESPONSE;
-										offset += packetLen;
-
-										// Check Tag access packet
-										//                                        if ((currentCommandResponse | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0)
-										{
-											Operation RealCurrentOperation = (Operation)(_deviceHandler._currentCmdRemark);
-
-											switch (RealCurrentOperation)
-											{
-												case CSLibrary.Constants.Operation.TAG_READ_PC:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.PC,
-															CSLibrary.Constants.TagAccess.READ,
-															m_rdr_opt_parms.TagReadPC.pc));
-													}
-													break;
-
-												case CSLibrary.Constants.Operation.TAG_READ_EPC:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															Bank.EPC,
-															TagAccess.READ,
-															m_rdr_opt_parms.TagReadEPC.epc));
-													}
-													break;
-
-												case CSLibrary.Constants.Operation.TAG_READ_ACC_PWD:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.ACC_PWD,
-															CSLibrary.Constants.TagAccess.READ,
-															m_rdr_opt_parms.TagReadAccPwd.password));
-													}
-													break;
-
-												case CSLibrary.Constants.Operation.TAG_READ_KILL_PWD:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.KILL_PWD,
-															CSLibrary.Constants.TagAccess.READ,
-															m_rdr_opt_parms.TagReadKillPwd.password));
-													}
-													break;
-
-												case CSLibrary.Constants.Operation.TAG_READ_TID:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.TID,
-															CSLibrary.Constants.TagAccess.READ,
-															m_rdr_opt_parms.TagReadTid.tid));
-													}
-													break;
-
-												case CSLibrary.Constants.Operation.TAG_READ_USER:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															Bank.USER,
-															TagAccess.READ,
-															m_rdr_opt_parms.TagReadUser.pData));
-													}
-													break;
-
-                                                case CSLibrary.Constants.Operation.TAG_WRITE_PC:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.PC,
-                                                            CSLibrary.Constants.TagAccess.WRITE,
-															m_rdr_opt_parms.TagReadPC.pc));
-													}
-													break;
-
-                                                case CSLibrary.Constants.Operation.TAG_WRITE_EPC:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															Bank.EPC,
-															CSLibrary.Constants.TagAccess.WRITE,
-															m_rdr_opt_parms.TagReadEPC.epc));
-													}
-													break;
-
-                                                case CSLibrary.Constants.Operation.TAG_WRITE_ACC_PWD:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.ACC_PWD,
-															CSLibrary.Constants.TagAccess.WRITE,
-															m_rdr_opt_parms.TagReadAccPwd.password));
-													}
-													break;
-
-                                                case CSLibrary.Constants.Operation.TAG_WRITE_KILL_PWD:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															CSLibrary.Constants.Bank.KILL_PWD,
-															CSLibrary.Constants.TagAccess.WRITE,
-															m_rdr_opt_parms.TagReadKillPwd.password));
-													}
-													break;
-
-                                                case CSLibrary.Constants.Operation.TAG_WRITE_USER:
-													{
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															Bank.USER,
-															CSLibrary.Constants.TagAccess.WRITE,
-															m_rdr_opt_parms.TagReadUser.pData));
-													}
-													break;
-
-												case CSLibrary.Constants.Operation.TAG_LOCK:
-													{
-														CSLibrary.Debug.PrintLine("Tag lock end {0}", currentCommandResponse);
-
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															Bank.UNKNOWN,
-															TagAccess.LOCK,
-															null));
-													}
-													break;
-											}
-										}
-
-										FireStateChangedEvent(CSLibrary.Constants.RFState.IDLE);
-										break;
-
-									case 0x0005:    /// inventory packet
-										R2000Packet_Inventory(recvData, offset);
-										offset += packetLen;
-										break;
-
-									case 0x0006:    // Tag access Packet
-										if (R2000Packet_TagAccess(recvData, offset))
-											result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
-										offset += packetLen;
-										break;
-								}
-							}
-							break;
-					}
-				}
-			}
-
-            if (_RingBufferDataSize == offset)
-            {
-                _RingBufferDataSize = 0;
-            }
-            else
-            {
-                _RingBufferDataSize -= offset;
-                Array.Copy(_RingBuffer, offset, _RingBuffer, 0, _RingBufferDataSize);    
-            }
-
-			return result;
-		}
-#endif
-
-#if oldcode
-        /// <summary>
-        /// Transfer BT API packet to R2000 packet
-        /// </summary>
-        /// <param name="recvData"></param>
-        /// <param name="offset"></param>
-        /// <param name="size"></param>
-        public CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE DeviceRecvData_old(byte[] recvData, HighLevelInterface.BTWAITCOMMANDRESPONSETYPE currentCommandResponse)
-		{
-            CSLibrary.HighLevelInterface.BTWAITCOMMANDRESPONSETYPE result = HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.NOWAIT;
-
-            int realProcessDataSize = recvData[2] + 8;     // 10 - 2
-            int offset = 10;   // packet header
-
-            while (offset < realProcessDataSize)
-            {
-                if (_dataBuffer.length == 0)
-                {
-                    // first packet
-                    byte header = recvData[offset];
-
-                    switch (header)
-                    {
-                        case 0x40:  // Abort packet
-                            {
-                                result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA2;
-                                offset += 8;
-                            }
-                            break;
-
-                        case 0x00:
-                        case 0x70:  // register read packet
-                            {
-                                UInt16 add = (UInt16)(recvData[offset + 3] << 8 | recvData[offset + 2]);
-                                UInt32 data = (UInt16)(recvData[offset + 7] << 24 | recvData[offset + 6] << 16 | recvData[offset + 5] << 8 | recvData[offset + 4]);
-
-                                _registerData[add] = data;
-
-                                result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
-                            }
-
-                            offset += 8;
-                            break;
-
-                        default:
-                            {
-                                int pkt_type = BitConverter.ToUInt16(recvData, offset + 2) & 0x7fff;
-                                int packetLen = BitConverter.ToUInt16(recvData, offset + 4) * 4 + 8;
-
-                                switch (pkt_type)
-                                {
-                                    default:
-                                        offset = realProcessDataSize;
-                                        break;
-
-                                    case 0x0000:    // Command begin Packet
-                                        offset += packetLen;
-                                        break;
-
-                                    case 0x0001:    // Command end Packet
-                                        result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.COMMANDENDRESPONSE;
-                                        offset += packetLen;
-
-                                        // Check Tag access packet
-                                        //                                        if ((currentCommandResponse | HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0)
-                                        {
-                                            Operation RealCurrentOperation = (Operation)(_deviceHandler._currentCmdRemark);
-
-                                            switch (RealCurrentOperation)
-                                            {
-                                                case CSLibrary.Constants.Operation.TAG_READ_PC:
-                                                    {
-                                                        FireAccessCompletedEvent(
-                                                            new OnAccessCompletedEventArgs(
-                                                            (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-                                                            CSLibrary.Constants.Bank.PC,
-                                                            CSLibrary.Constants.TagAccess.READ,
-                                                            m_rdr_opt_parms.TagReadPC.pc));
-                                                    }
-                                                    break;
-
-                                                case CSLibrary.Constants.Operation.TAG_READ_EPC:
-                                                    {
-                                                        FireAccessCompletedEvent(
-                                                            new OnAccessCompletedEventArgs(
-                                                            (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-                                                            Bank.EPC,
-                                                            TagAccess.READ,
-                                                            m_rdr_opt_parms.TagReadEPC.epc));
-                                                    }
-                                                    break;
-
-                                                case CSLibrary.Constants.Operation.TAG_READ_ACC_PWD:
-                                                    {
-                                                        FireAccessCompletedEvent(
-                                                            new OnAccessCompletedEventArgs(
-                                                            (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-                                                            CSLibrary.Constants.Bank.ACC_PWD,
-                                                            CSLibrary.Constants.TagAccess.READ,
-                                                            m_rdr_opt_parms.TagReadAccPwd.password));
-                                                    }
-                                                    break;
-
-                                                case CSLibrary.Constants.Operation.TAG_READ_KILL_PWD:
-                                                    {
-                                                        FireAccessCompletedEvent(
-                                                            new OnAccessCompletedEventArgs(
-                                                            (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-                                                            CSLibrary.Constants.Bank.KILL_PWD,
-                                                            CSLibrary.Constants.TagAccess.READ,
-                                                            m_rdr_opt_parms.TagReadKillPwd.password));
-                                                    }
-                                                    break;
-
-                                                case CSLibrary.Constants.Operation.TAG_READ_TID:
-                                                    {
-                                                        FireAccessCompletedEvent(
-                                                            new OnAccessCompletedEventArgs(
-                                                            (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-                                                            CSLibrary.Constants.Bank.TID,
-                                                            CSLibrary.Constants.TagAccess.READ,
-                                                            m_rdr_opt_parms.TagReadTid.tid));
-                                                    }
-                                                    break;
-
-                                                case CSLibrary.Constants.Operation.TAG_READ_USER:
-                                                    {
-                                                        FireAccessCompletedEvent(
-                                                            new OnAccessCompletedEventArgs(
-                                                            (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-                                                            Bank.USER,
-                                                            TagAccess.READ,
-                                                            m_rdr_opt_parms.TagReadUser.pData));
-                                                    }
-                                                    break;
-
-												case CSLibrary.Constants.Operation.TAG_LOCK:
-													{
-														CSLibrary.Debug.PrintLine("Tag lock end {0}", currentCommandResponse);
-
-														FireAccessCompletedEvent(
-															new OnAccessCompletedEventArgs(
-															(((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
-															Bank.UNKNOWN,
-															TagAccess.LOCK,
-															null));
-													}
-													break;
-											}
-										}
-
-                                        FireStateChangedEvent(CSLibrary.Constants.RFState.IDLE);
-                                        break;
-
-                                    case 0x0005:    /// inventory packet
-                                        R2000Packet_Inventory(recvData, offset);
-                                        offset += packetLen;
-                                        break;
-
-                                    case 0x0006:    // Tag access Packet
-                                        if (R2000Packet_TagAccess(recvData, offset))
-                                            result |= HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1;
-                                        offset += packetLen;
-                                        break;
-                                }
-                            }
-                            break;
-                    }
+                        break;
                 }
             }
 
             return result;
         }
-#endif
 
         ////////////////////////////////////////////////////////////////////////////////
         // Name:        Radio::WriteMacMaskRegisters
@@ -2028,47 +1688,10 @@ namespace CSLibrary
 		{
 		}
 
-
-		/*		readonly UInt16[,] _mainRegister = new UInt16[0x0c, 2]  {
-																{ 0x000, 0x002 },
-																{ 0x100, 0x100 },
-																{ 0x200, 0x200 },
-																{ 0x300, 0x300 },
-																{ 0x400, 0x400 },
-																{ 0x500, 0x500 },
-																{ 0x600, 0x600 },
-																{ 0x700, 0x700 },
-																{ 0x800, 0x800 },
-																{ 0x900, 0x902 },
-																{ 0xa00, 0xa00 },
-																{ 0xb00, 0xb02 }};
-		*/
-
 		internal void Connect()
 		{
             MacRegisterInitialize();
             ReadReaderOEMData();
-            //MacRegisterInitialize();
-
-
-
-            //			ReadReaderRegister((UInt16)MACREGISTER.HST_ANT_CYCLES);
-
-            //			MacWriteRegister(MACREGISTER.HST_ANT_DESC_SEL, 0);  // Set Antenna 0 
-
-            /*
-                        ReadReaderRegister((UInt16)MACREGISTER.HST_ANT_DESC_RFPOWER);   // Get Antenna 0 Power Level
-                        ReadReaderRegister((UInt16)MACREGISTER.HST_ANT_DESC_DWELL);
-
-                        ReadReaderRegister((UInt16)MACREGISTER.HST_QUERY_CFG);
-                        ReadReaderRegister((UInt16)MACREGISTER.HST_INV_CFG);
-                        ReadReaderRegister((UInt16)MACREGISTER.HST_INV_EPC_MATCH_CFG);
-
-                        ReadReaderRegister((UInt16)MACREGISTER.HST_TAGACC_DESC_CFG);
-
-                        ReadReaderRegister(0x005); // reader mac error register
-            */
-
         }
 
         internal void Reconnect()

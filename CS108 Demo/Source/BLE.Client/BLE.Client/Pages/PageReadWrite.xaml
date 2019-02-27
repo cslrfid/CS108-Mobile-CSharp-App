@@ -9,7 +9,7 @@
     <StackLayout Padding="5, 3, 5, 0">
 
       <Label Text="Selected EPC"/>
-      <Editor x:Name="editorSelectedEPC" Text="{ Binding entrySelectedEPC, Mode=TwoWay }" HorizontalOptions="FillAndExpand" HeightRequest="80"/>
+      <Editor x:Name="editorSelectedEPC" Text="{ Binding entrySelectedEPC, Mode=TwoWay }" HorizontalOptions="FillAndExpand"/>
 
       <StackLayout Orientation="Horizontal">
         <Label Text="Access PWD" WidthRequest="70" />
@@ -33,8 +33,8 @@
         <Label Text="{ Binding labelEPCStatus }" WidthRequest="30" HorizontalOptions="End" VerticalOptions="Center" />
       </StackLayout>
 
-      <Editor x:Name="entryEPC" Text="{ Binding entryEPC, Mode=TwoWay }" TextChanged="onentryEPCTextChanged" Unfocused="onentryEPCUnfocused" HorizontalOptions="FillAndExpand" HeightRequest="80"/>
-            
+      <Editor x:Name="entryEPC" Text="{ Binding entryEPC, Mode=TwoWay }" TextChanged="onentryEPCTextChanged" Unfocused="onentryEPCUnfocused" HorizontalOptions="FillAndExpand"/>
+
       <StackLayout Orientation="Horizontal">
         <Switch IsToggled="{Binding switchACCPWDIsToggled, Mode=TwoWay }" />
         <Label Text="ACC PWD" WidthRequest="80" VerticalOptions="Center" />
