@@ -107,7 +107,6 @@ namespace CSLibrary
                     (m_rdr_opt_parms.TagSelected.flags & CSLibrary.Constants.SelectMaskFlags.ENABLE_NON_MATCH) == CSLibrary.Constants.SelectMaskFlags.ENABLE_NON_MATCH ?
                     CSLibrary.Constants.Action.DSLINVB_ASLINVA : CSLibrary.Constants.Action.ASLINVA_DSLINVB, 0);
 
-
                 if (m_rdr_opt_parms.TagSelected.bank == CSLibrary.Constants.MemoryBank.EPC)
                 {
                     sel[0].mask = new CSLibrary.Structures.SelectMask(

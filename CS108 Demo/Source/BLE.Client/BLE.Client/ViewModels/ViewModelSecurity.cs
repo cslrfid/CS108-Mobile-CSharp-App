@@ -106,13 +106,7 @@ namespace BLE.Client.ViewModels
                 return;
             }
 
-            if (entrySelectedEPC.Length > 64)
-            {
-                //MessageBox.Show("EPC too long, only selecte first 256 bit");
-                BleMvxApplication._reader.rfid.Options.TagSelected.epcMask = new CSLibrary.Structures.S_MASK(/*m_record.pc.ToString() + */entrySelectedEPC.Substring(0, 64));
-            }
-            else
-                BleMvxApplication._reader.rfid.Options.TagSelected.epcMask = new CSLibrary.Structures.S_MASK(/*m_record.pc.ToString() + */entrySelectedEPC);
+            BleMvxApplication._reader.rfid.Options.TagSelected.epcMask = new CSLibrary.Structures.S_MASK(/*m_record.pc.ToString() + */entrySelectedEPC);
 
             BleMvxApplication._reader.rfid.Options.TagSelected.flags = CSLibrary.Constants.SelectMaskFlags.DISABLE_ALL;
             BleMvxApplication._reader.rfid.Options.TagSelected.epcMaskOffset = 0;

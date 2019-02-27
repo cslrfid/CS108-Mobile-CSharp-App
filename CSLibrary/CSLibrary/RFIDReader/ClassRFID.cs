@@ -1434,7 +1434,6 @@ namespace CSLibrary
                 SC.countCriteria = (uint)critlist.Length;
                 SC.pCriteria = (SelectCriterion[])critlist.Clone();
 
-
                 index = 0;
                 {
                     SelectCriterion pCriterion = SC.pCriteria[index];
@@ -1475,6 +1474,72 @@ namespace CSLibrary
                 return Result.SYSTEM_CATCH_EXCEPTION;
             }
             return m_Result;
+        }
+
+        public Result SetSelectCriteria(uint index, SelectCriterion crit)
+        {
+            uint registerValue;
+
+            // Instruct the MAC as to which select mask we want to work with
+            MacWriteRegister(MACREGISTER.HST_TAGMSK_DESC_SEL, index);
+
+            if (crit == null)
+            {
+                MacWriteRegister(MACREGISTER.HST_TAGMSK_DESC_CFG, 0x0000);
+                //MacWriteRegister(MACREGISTER.HST_TAGMSK_BANK, 0x0000);
+                //MacWriteRegister(MACREGISTER.HST_TAGMSK_PTR, 0x0000);
+                //MacWriteRegister(MACREGISTER.HST_TAGMSK_LEN, 0x0000);
+                return Result.OK;
+            }
+
+            try
+            {
+                {
+                    SelectCriterion pCriterion = crit;
+                    SelectMask pMask = pCriterion.mask;
+                    SelectAction pAction = pCriterion.action;
+
+                    // Create the HST_TAGMSK_DESC_CFG register value and write it to the MAC
+                    registerValue = (0x01 |
+                        (((uint)(pAction.target) & 0x07) << 1) |
+                        (((uint)(pAction.action) & 0x07) << 4) |
+                        (pAction.enableTruncate != 0x00 ? (uint)(1 << 7) : 0));
+                    MacWriteRegister(MACREGISTER.HST_TAGMSK_DESC_CFG, registerValue);
+
+                    // Create the HST_TAGMSK_BANK register value and write it to the MAC
+                    registerValue = (uint)pMask.bank;
+                    MacWriteRegister(MACREGISTER.HST_TAGMSK_BANK, registerValue);
+
+                    // Write the mask offset to the HST_TAGMSK_PTR register
+                    MacWriteRegister(MACREGISTER.HST_TAGMSK_PTR, (uint)pMask.offset);
+
+                    // Create the HST_TAGMSK_LEN register and write it to the MAC
+                    registerValue = (uint)(pMask.count);
+                    MacWriteRegister(MACREGISTER.HST_TAGMSK_LEN, registerValue);
+
+                    // Now write the MAC's mask registers
+                    WriteMacMaskRegisters((ushort)MACREGISTER.HST_TAGMSK_0_3, pMask.count, pMask.mask);
+                    // Set up the selection criteria
+                }
+            }
+            catch (System.Exception ex)
+            {
+#if DEBUG
+                //				CSLibrary.Diagnostics.CoreDebug.Logger.ErrorException("HighLevelInterface.SetSelectCriteria()", ex);
+#endif
+                return Result.SYSTEM_CATCH_EXCEPTION;
+            }
+            return m_Result;
+        }
+
+        public Result CancelAllSelectCriteria()
+        {
+            for (uint cnt = 0; cnt < 7; cnt++)
+            {
+                SetSelectCriteria(cnt, null);
+            }
+
+            return Result.OK;
         }
 
         /*        public Result SetSelectCriteria(SelectCriterion[] critlist)
