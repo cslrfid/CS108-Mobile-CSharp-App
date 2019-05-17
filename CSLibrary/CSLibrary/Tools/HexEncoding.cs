@@ -343,6 +343,48 @@ namespace CSLibrary.Tools
         }
 
         /// <summary>
+        /// return UInt32 array from string input
+        /// </summary>
+        /// <param name="Input"></param>
+        /// <returns></returns>
+        public static UInt32[] ToUInt32s(string Input)
+        {
+            string newString = "";
+            char c;
+            // remove all none A-F, 0-9, characters
+            for (int i = 0; i < Input.Length; i++)
+            {
+                c = Input[i];
+                if (IsHexDigit(c))
+                    newString += c;
+            }
+            int fullUshortLength = newString.Length / 8;
+            int leftUshortLength = newString.Length % 8;
+            UInt32 [] UInt32s = new UInt32[fullUshortLength + (leftUshortLength > 0 ? 1 : 0)];
+            string hex = "";
+            int j = 0;
+            for (int i = 0; i < UInt32s.Length; i++)
+            {
+                if (i < fullUshortLength)
+                {
+                    hex = new String(new Char[] { newString[j], newString[j + 1], newString[j + 2], newString[j + 3], newString[j + 4], newString[j + 5], newString[j + 6], newString[j + 7] });
+                }
+                else
+                {
+                    hex = "";
+                    for (int cnt = 0; cnt < leftUshortLength; cnt++)
+                        hex += newString[j + cnt];
+
+                    for (int cnt = 0; cnt < 8 - leftUshortLength; cnt++)
+                        hex += '0';
+                }
+                UInt32s[i] = HexToUInt32(hex);
+                j = j + 8;
+            }
+            return UInt32s;
+        }
+
+        /// <summary>
         /// Byte to String Conversion
         /// </summary>
         /// <param name="bytes">Input Byte Array</param>
@@ -441,8 +483,15 @@ namespace CSLibrary.Tools
         private static ushort HexToUshort(string hex)
         {
             if (hex.Length > 4 || hex.Length <= 0)
-                throw new ArgumentException("hex must be 1 or 2 characters in length");
+                throw new ArgumentException("hex must be 1 ~ 4 characters in length");
             ushort newByte = ushort.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+            return newByte;
+        }
+        private static UInt32 HexToUInt32(string hex)
+        {
+            if (hex.Length > 8 || hex.Length <= 0)
+                throw new ArgumentException("hex must be 1 ~ 8 characters in length");
+            UInt32 newByte = UInt32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
             return newByte;
         }
         /// <summary>

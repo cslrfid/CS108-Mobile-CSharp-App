@@ -322,11 +322,14 @@ namespace CSLibrary
             HST_RFTC_FRQCH_DESC_PARFU3 = 0x0C07,
             HST_RFTC_FRQCH_CMDSTART = 0x0C08,
 
+            // for Ucode DNA Tag
             AUTHENTICATE_CFG = 0x0F00,
             AUTHENTICATE_MSG0 = 0x0F01,
             AUTHENTICATE_MSG1 = 0x0F02,
             AUTHENTICATE_MSG2 = 0x0F03,
             AUTHENTICATE_MSG3 = 0x0F04,
+            READBUFFER_PTR = 0x0A03,
+            READBUFFER_LEN = 0x0A04,
             UNTRACEABLE_CFG = 0x0F05,
 
             INV_CYCLE_DELAY = 0x0F0F,
@@ -391,6 +394,7 @@ namespace CSLibrary
             CUSTOMEMRESETALARMS,
             CUSTOMEMSENDSPI,
             AUTHENTICATE = 0x50,
+            READBUFFER = 0x51,
             UNTRACEABLE = 0x52,
             CMD_END
         }
@@ -839,6 +843,51 @@ namespace CSLibrary
             //FireStateChangedEvent(RFState.IDLE);
         }
 
+        private void TagAuthenticateThreadProc()
+        {
+            UInt32 value = 0;
+            UInt32[] m_data;
+
+            if (m_rdr_opt_parms.TagAuthenticate.Message.Length > 32)
+            {
+                m_Result = Result.INVALID_PARAMETER;
+                return;
+            }
+
+            value |= (UInt32)m_rdr_opt_parms.TagAuthenticate.SenRep & 0x01;
+            value |= ((UInt32)m_rdr_opt_parms.TagAuthenticate.IncRepLen & 0x01) << 1;
+            value |= ((UInt32)m_rdr_opt_parms.TagAuthenticate.CSI & 0xff) << 2;
+            value |= ((UInt32)m_rdr_opt_parms.TagAuthenticate.Length & 0xFFF) << 10;
+
+            string NewMessage = m_rdr_opt_parms.TagAuthenticate.Message + new String('0', 32 - m_rdr_opt_parms.TagAuthenticate.Message.Length);
+
+            m_data = CSLibrary.Tools.Hex.ToUInt32s(NewMessage);
+
+            MacWriteRegister(MACREGISTER.AUTHENTICATE_CFG, value);
+            MacWriteRegister(MACREGISTER.AUTHENTICATE_MSG0, m_data[0]);
+            MacWriteRegister(MACREGISTER.AUTHENTICATE_MSG1, m_data[1]);
+            MacWriteRegister(MACREGISTER.AUTHENTICATE_MSG2, m_data[2]);
+            MacWriteRegister(MACREGISTER.AUTHENTICATE_MSG3, m_data[3]);
+
+            Start18K6CRequest(0, CSLibrary.Constants.SelectFlags.SELECT);
+
+            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.AUTHENTICATE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
+            m_Result = Result.OK;
+            return;
+        }
+
+        private void TagReadBufferThreadProc()
+        {
+            MacWriteRegister(MACREGISTER.READBUFFER_PTR, m_rdr_opt_parms.TagReadBuffer.Offset);
+            MacWriteRegister(MACREGISTER.READBUFFER_LEN, (UInt32)(m_rdr_opt_parms.TagReadBuffer.Length & 0xfff));
+
+            Start18K6CRequest(0, CSLibrary.Constants.SelectFlags.SELECT);
+
+            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.READBUFFER), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
+            m_Result = Result.OK;
+            return;
+        }
+
         private void TagUntraceableThreadProc()
         {
             UInt32 value = 0;
@@ -858,13 +907,11 @@ namespace CSLibrary
 
             MacWriteRegister( MACREGISTER.UNTRACEABLE_CFG, value);
 
+            Start18K6CRequest(0, CSLibrary.Constants.SelectFlags.SELECT);
+
             // Issue the untraceable command
             _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.UNTRACEABLE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
-        }
-
-        private void TagReadBufferThreadProc()
-        {
-            m_Result = Result.INVALID_PARAMETER;
+            m_Result = Result.OK;
             return;
         }
 

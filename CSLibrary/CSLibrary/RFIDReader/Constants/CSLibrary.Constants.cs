@@ -1214,9 +1214,11 @@ ISO/IEC 24730 (WhereNet)	48	0000 0000	0000 0000	xxxx xxxx xxxx xxxx xxxx xxxx xx
 
         TAG_PREFILTER,
 
-        TAG_UNTRACEABLE,
+        TAG_AUTHENTICATE,
 
         TAG_READBUFFER,
+
+        TAG_UNTRACEABLE,
     }
     /// <summary>
     /// Memory bank

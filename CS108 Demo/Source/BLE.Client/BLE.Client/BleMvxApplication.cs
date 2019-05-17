@@ -183,6 +183,11 @@ namespace BLE.Client
         // for battery level display
         public static bool _batteryLow = false;
 
+        // for RFMicro
+        public static int _sensorValueType = 0; // 0 = Temp, 1 = Sensor Code
+        public static uint _minOCRSSI = 0;
+        public static uint _maxOCRSSI = 0;
+
         public override void Initialize()
         {
             RegisterAppStart<ViewModelMainMenu>();

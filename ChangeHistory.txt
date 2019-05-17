@@ -3,6 +3,7 @@
 1. Fix wrong kill password on Read/Write Page.
 
 2.0.10-147 Change History
+---------------------
 1. Fix can not set target A when pre-filter enable.
 2. CSLibrary update to 2.0.10.1
 
