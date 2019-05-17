@@ -975,6 +975,10 @@ ISO/IEC 24730 (WhereNet)	48	0000 0000	0000 0000	xxxx xxxx xxxx xxxx xxxx xxxx xx
         /// </summary>
         TAG_WRITE_USER,
         /// <summary>
+        /// perform 18K6C block write to target tag
+        /// </summary>
+        TAG_BLOCK_WRITE,
+        /// <summary>
         /// perform custom ranging on any tags
         /// </summary>
         TAG_RANGING,
@@ -1288,6 +1292,14 @@ ISO/IEC 24730 (WhereNet)	48	0000 0000	0000 0000	xxxx xxxx xxxx xxxx xxxx xxxx xx
         /// ISO 18000-6C Erase
         /// </summary>
         ERASE = 0xC6,
+        /// <summary>
+        /// UCODE DNA Authenticate
+        /// </summary>
+        AUTHENTICATE = 0x01,
+        /// <summary>
+        /// UCODE DNA Untracable
+        /// </summary>
+        UNTRACEABLE = 0x02,
         /// <summary>
         /// Unknown
         /// </summary>

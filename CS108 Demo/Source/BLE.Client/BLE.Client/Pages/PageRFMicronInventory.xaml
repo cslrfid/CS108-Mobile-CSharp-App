@@ -36,9 +36,9 @@
                               <ColumnDefinition Width="0.14*" />
                               <ColumnDefinition Width="0.08*" />
                             </Grid.ColumnDefinitions>
-                            <Label Text="{Binding EPC}" VerticalTextAlignment="Start" FontSize="Small" />
+                            <Label Text="{Binding DisplayName}" VerticalTextAlignment="Start" FontSize="Small" />
                             <Label Grid.Column="1" Text="{Binding OCRSSI}" VerticalTextAlignment="Start" HorizontalTextAlignment="Center"  TextColor="{Binding RSSIColor}"/>
-                            <Label Grid.Column="2" Text="{Binding SensorAvgValue}" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                            <Label Grid.Column="2" Text="{Binding SensorAvgValue}" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" TextColor="{Binding valueColor}"/>
                             <Label Grid.Column="3" Text="{Binding SucessCount}" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" />
                         </Grid>
                     </StackLayout>
@@ -48,15 +48,19 @@
     </ListView>
     
     <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand" >
-
+      
       <Button Text= "{Binding startInventoryButtonText}" Font="Large" Command="{Binding OnStartInventoryButtonCommand}" />
-      <Button Text="Clear" Font="Large" Command="{Binding OnClearButtonCommand}" />
 
       <StackLayout Orientation="Horizontal">
+        <Button Text="Clear" Font="Large" Command="{Binding OnClearButtonCommand}" HorizontalOptions="CenterAndExpand" />
+        <Button Text="Share" Font="Large" Command="{Binding OnShareDataCommand}" HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
 
-        <Label Text="{Binding InventoryTime}" Font="Small" HorizontalOptions="CenterAndExpand" VerticalOptions="End" />
 
-      </StackLayout>
+        <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding currentPower}" Font="Small" HorizontalOptions="Start" VerticalOptions="CenterAndExpand" />
+                <Label Text="{Binding InventoryTime}" Font="Small" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+        </StackLayout>
 
       <StackLayout Orientation="Horizontal">
 

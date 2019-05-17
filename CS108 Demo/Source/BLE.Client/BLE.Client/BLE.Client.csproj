@@ -50,8 +50,14 @@
     <Compile Include="Pages\PageBarcodeScan.xaml.cs">
       <DependentUpon>PageBarcodeScan.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PageBlockWrite.xaml.cs">
+      <DependentUpon>PageBlockWrite.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\PageFilter.xaml.cs">
       <DependentUpon>PageFilter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PageRFMicronNickName.xaml.cs">
+      <DependentUpon>PageRFMicronNickname.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\PageRFMicroReadTemp.xaml.cs">
       <DependentUpon>PageRFMicroReadTemp.xaml</DependentUpon>
@@ -120,6 +126,7 @@
     <Compile Include="Pages\DeviceListPage.xaml.cs">
       <DependentUpon>DeviceListPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ViewModelBlockWrite.cs" />
     <Compile Include="ViewModels\ViewModelFilter.cs" />
     <Compile Include="ViewModels\ViewModelGeiger.cs" />
     <Compile Include="ViewModels\ViewModelRFMicroInventory.cs" />
@@ -128,6 +135,7 @@
     <Compile Include="ViewModels\ViewModelMultiBankInventory.cs" />
     <Compile Include="ViewModels\ViewModelInventorynScan.cs" />
     <Compile Include="ViewModels\ViewModelMainMenu.cs" />
+    <Compile Include="ViewModels\ViewModelRFMicroNickname.cs" />
     <Compile Include="ViewModels\ViewModelRFMicroReadTemp.cs" />
     <Compile Include="ViewModels\ViewModelRFMicroSetting .cs" />
     <Compile Include="ViewModels\ViewModelUCODEDNA.cs" />
@@ -391,6 +399,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\PageRFMicroSetting.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\PageRFMicronNickname.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\PageBlockWrite.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

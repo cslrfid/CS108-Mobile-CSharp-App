@@ -15,16 +15,21 @@ namespace BLE.Client.ViewModels
     {
         private readonly IUserDialogs _userDialogs;
 
+        public string buttonPowerText { get; set; }
+        public string buttonIndicatorsProfileText { get; set; }
         public string buttonSensorTypeText { get; set; }
+        public string buttonSensorUnitText { get; set; }
         public string entryMinOCRSSIText { get; set; }
         public string entryMaxOCRSSIText { get; set; }
         public ICommand OnOKButtonCommand { protected set; get; }
+        public ICommand OnNicknameButtonCommand { protected set; get; }
 
         public ViewModelRFMicroSetting(IAdapter adapter, IUserDialogs userDialogs) : base(adapter)
         {
             _userDialogs = userDialogs;
 
             OnOKButtonCommand = new Command(OnOKButtonClicked);
+            OnNicknameButtonCommand = new Command(OnNicknameButtonClicked);
         }
 
         public override void Resume()
@@ -42,17 +47,16 @@ namespace BLE.Client.ViewModels
             base.InitFromBundle(parameters);
         }
 
-        void OnOKButtonClicked()
+        void OnNicknameButtonClicked(object ind)
         {
-            RaisePropertyChanged(() => buttonSensorTypeText);
-            RaisePropertyChanged(() => entryMinOCRSSIText);
-            RaisePropertyChanged(() => entryMaxOCRSSIText);
+            ShowViewModel<ViewModelRFMicroNickname>(new MvxBundle());
+        }
 
-            BleMvxApplication._sensorValueType = buttonSensorTypeText == "Sensor Code" ? 0 : 1;
-            BleMvxApplication._minOCRSSI = uint.Parse(entryMinOCRSSIText);
-            BleMvxApplication._maxOCRSSI = uint.Parse(entryMaxOCRSSIText);
-
-            ShowViewModel<ViewModelRFMicroInventory>(new MvxBundle());
+        void OnOKButtonClicked(object ind)
+        {
+            if (ind != null)
+                if ((int)ind == 1)
+                    ShowViewModel<ViewModelRFMicroInventory>(new MvxBundle());
         }
     }
 }

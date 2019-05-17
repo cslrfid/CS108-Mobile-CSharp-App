@@ -31,15 +31,16 @@ namespace BLE.Client.ViewModels
         public string labelKey0Status { get; set; } = "";
         public string labelKey1Status { get; set; } = "";
 
-        public ICommand OnReadKeyButtonCommand { protected set; get; }
-        public ICommand OnRandomKeyButtonCommand { protected set; get; }
-        public ICommand OnWriteKeyButtonCommand { protected set; get; }
+        public ICommand OnReadKey0ButtonCommand { protected set; get; }
+        public ICommand OnReadKey1ButtonCommand { protected set; get; }
+        public ICommand OnWriteKey0ButtonCommand { protected set; get; }
+        public ICommand OnWriteKey1ButtonCommand { protected set; get; }
         public ICommand OnHideButtonCommand { protected set; get; }
         public ICommand OnUnhideButtonCommand { protected set; get; }
-        public ICommand OnActivateKey0ButtonCommand { protected set; get; }
-        public ICommand OnActivateKey1ButtonCommand { protected set; get; }
         public ICommand OnAuthenticateTAM1ButtonCommand { protected set; get; }
         public ICommand OnAuthenticateTAM2ButtonCommand { protected set; get; }
+        public ICommand OnActivateKey0ButtonCommand { protected set; get; }
+        public ICommand OnActivateKey1ButtonCommand { protected set; get; }
 
         uint accessPwd;
 
@@ -60,9 +61,10 @@ namespace BLE.Client.ViewModels
         {
             _userDialogs = userDialogs;
 
-            OnReadKeyButtonCommand = new Command(OnReadKeyButtonButtonClick);
-            OnRandomKeyButtonCommand = new Command(OnRandomKeyButtonButtonClick);
-            OnWriteKeyButtonCommand = new Command(OnWriteKeyButtonButtonClick);
+            OnReadKey0ButtonCommand = new Command(OnReadKey0ButtonButtonClick);
+            OnReadKey1ButtonCommand = new Command(OnReadKey1ButtonButtonClick);
+            OnWriteKey0ButtonCommand = new Command(OnWriteKey0ButtonButtonClick);
+            OnWriteKey1ButtonCommand = new Command(OnWriteKey1ButtonButtonClick);
             OnHideButtonCommand = new Command(OnHideButtonButtonClick);
             OnUnhideButtonCommand = new Command(OnUnhideButtonButtonClick);
             OnActivateKey0ButtonCommand = new Command(OnActivateKey0ButtonButtonClick);
@@ -100,6 +102,8 @@ namespace BLE.Client.ViewModels
             RaisePropertyChanged(() => entrySelectedKey1);
 
             BleMvxApplication._reader.rfid.OnAccessCompleted += new EventHandler<CSLibrary.Events.OnAccessCompletedEventArgs>(TagCompletedEvent);
+
+            BleMvxApplication._reader.rfid.SetPowerLevel((uint)BleMvxApplication._config.RFID_Power);
         }
 
         void OnRandomKeyButtonButtonClick()
@@ -119,7 +123,7 @@ namespace BLE.Client.ViewModels
             RaisePropertyChanged(() => entrySelectedKey1);
         }
 
-        void OnReadKeyButtonButtonClick()
+        void OnReadKey0ButtonButtonClick()
         {
             accessPwd = Convert.ToUInt32(entrySelectedPWD, 16);
 
@@ -127,7 +131,15 @@ namespace BLE.Client.ViewModels
             ReadKey0();
         }
 
-        void OnWriteKeyButtonButtonClick()
+        void OnReadKey1ButtonButtonClick()
+        {
+            accessPwd = Convert.ToUInt32(entrySelectedPWD, 16);
+
+            TagSelected();
+            ReadKey1();
+        }
+
+        void OnWriteKey0ButtonButtonClick()
         {
             accessPwd = Convert.ToUInt32(entrySelectedPWD, 16);
 
@@ -135,11 +147,19 @@ namespace BLE.Client.ViewModels
             WriteKey0();
         }
 
+        void OnWriteKey1ButtonButtonClick()
+        {
+            accessPwd = Convert.ToUInt32(entrySelectedPWD, 16);
+
+            TagSelected();
+            WriteKey1();
+        }
+
         void OnHideButtonButtonClick()
         {
             TagSelected();
 
-            BleMvxApplication._reader.rfid.Options.TagUntraceable.EPCLength = 0; // NXP AN11778 only have EPCLength function 
+            BleMvxApplication._reader.rfid.Options.TagUntraceable.EPCLength = 0; // NXP AN11778 only have EPCLength functional 
 
             /* for Gen2V2 
             BleMvxApplication._reader.rfid.Options.TagUntraceable.Range = CSLibrary.Structures.UNTRACEABLE_RANGE.Normal;
@@ -157,7 +177,7 @@ namespace BLE.Client.ViewModels
         {
             TagSelected();
 
-            BleMvxApplication._reader.rfid.Options.TagUntraceable.EPCLength = 6; // NXP AN11778 only have EPCLength function
+            BleMvxApplication._reader.rfid.Options.TagUntraceable.EPCLength = 6; // NXP AN11778 only have EPCLength functional
             BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_UNTRACEABLE);
         }
 
@@ -197,6 +217,9 @@ namespace BLE.Client.ViewModels
 
         void OnAuthenticateTAM1ButtonButtonClick()
         {
+            labelResponseStatus = "R";
+            RaisePropertyChanged(() => labelResponseStatus);
+
             TagSelected();
 
             BleMvxApplication._reader.rfid.Options.TagAuthenticate.SenRep = CSLibrary.Structures.SENREP.SEND;
@@ -208,6 +231,9 @@ namespace BLE.Client.ViewModels
 
         void OnAuthenticateTAM2ButtonButtonClick()
         {
+            labelResponseStatus = "R";
+            RaisePropertyChanged(() => labelResponseStatus);
+
             TagSelected();
 
             BleMvxApplication._reader.rfid.Options.TagAuthenticate.SenRep = CSLibrary.Structures.SENREP.SEND;
@@ -256,6 +282,13 @@ namespace BLE.Client.ViewModels
 
         void WriteKey0 ()
         {
+            RaisePropertyChanged(() => entrySelectedKey0);
+            if (entrySelectedKey0.Length != 32)
+            {
+                _userDialogs.Alert("Key 0 Error, please input 128bit (32 hex)");
+                return;
+            }
+
             _currentOperation = CURRENTOPERATION.WRITEKEY0;
 
             labelKey0Status = "W";
@@ -271,6 +304,13 @@ namespace BLE.Client.ViewModels
 
         void WriteKey1 ()
         {
+            RaisePropertyChanged(() => entrySelectedKey1);
+            if (entrySelectedKey1.Length != 32)
+            {
+                _userDialogs.Alert("Key 1 Error, please input 128bit (32 hex)");
+                return;
+            }
+
             _currentOperation = CURRENTOPERATION.WRITEKEY1;
 
             labelKey1Status = "W";
@@ -286,7 +326,32 @@ namespace BLE.Client.ViewModels
 
         void TagCompletedEvent(object sender, CSLibrary.Events.OnAccessCompletedEventArgs e)
         {
-            if (e.access == CSLibrary.Constants.TagAccess.READ)
+            if (e.access == CSLibrary.Constants.TagAccess.AUTHENTICATE)
+            {
+                if (e.success)
+                {
+                    entryResponse = BleMvxApplication._reader.rfid.Options.TagAuthenticate.pData.ToString();
+                    labelResponseStatus = "Ok";
+                    RaisePropertyChanged(() => entryResponse);
+                }
+                else
+                {
+                    labelResponseStatus = "E";
+                }
+                RaisePropertyChanged(() => labelResponseStatus);
+            }
+            else if (e.access == CSLibrary.Constants.TagAccess.UNTRACEABLE)
+            {
+                if (e.success)
+                {
+                    _userDialogs.Alert("UNTRACEABLE command success!");
+                }
+                else
+                {
+                    _userDialogs.Alert("UNTRACEABLE command fail!!!");
+                }
+            }
+            else if (e.access == CSLibrary.Constants.TagAccess.READ)
             {
                 switch (e.bank)
                 {
@@ -326,14 +391,10 @@ namespace BLE.Client.ViewModels
                             }
                         }
 
-                        if (_currentOperation == CURRENTOPERATION.READKEY0)
-                            ReadKey1();
-
                         break;
                 }
             }
-
-            if (e.access == CSLibrary.Constants.TagAccess.WRITE)
+            else if (e.access == CSLibrary.Constants.TagAccess.WRITE)
             {
                 switch (e.bank)
                 {
@@ -376,11 +437,13 @@ namespace BLE.Client.ViewModels
                             switch (_currentOperation)
                             {
                                 case CURRENTOPERATION.WRITEKEY0:
+                                case CURRENTOPERATION.ACTIVEKEY0:
                                     labelKey0Status = "O";
                                     RaisePropertyChanged(() => labelKey0Status);
                                     break;
 
                                 case CURRENTOPERATION.WRITEKEY1:
+                                case CURRENTOPERATION.ACTIVEKEY1:
                                     labelKey1Status = "O";
                                     RaisePropertyChanged(() => labelKey1Status);
                                     break;
@@ -391,23 +454,23 @@ namespace BLE.Client.ViewModels
                             switch (_currentOperation)
                             {
                                 case CURRENTOPERATION.WRITEKEY0:
+                                case CURRENTOPERATION.ACTIVEKEY0:
                                     labelKey0Status = "E";
                                     RaisePropertyChanged(() => labelKey0Status);
                                     break;
 
                                 case CURRENTOPERATION.WRITEKEY1:
+                                case CURRENTOPERATION.ACTIVEKEY1:
                                     labelKey1Status = "E";
                                     RaisePropertyChanged(() => labelKey1Status);
                                     break;
                             }
                         }
 
-                        if (_currentOperation == CURRENTOPERATION.WRITEKEY0)
-                            WriteKey1();
-
                         break;
                 }
             }
+
         }
     }
 }

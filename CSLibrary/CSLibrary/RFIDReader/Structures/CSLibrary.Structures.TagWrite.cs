@@ -244,41 +244,84 @@ namespace CSLibrary.Structures
 
     }
 
-/*
- * /// <summary>
-    /// Write User structures, configure this before write new user data
+    /// <summary>
+    /// The ISO 18000-6C tag-block write operation parameters
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public class TagWriteUserParms
+    public class TAG_BLOCK_WRITE_PARMS
     {
         /// <summary>
-        /// The access password for the tags.  A value of zero indicates no 
-        /// access password. 
+        /// The maximum number of times the write should be retried in the event 
+        /// of write-verify failure(s).  In the event of write-verify failure(s), the write 
+        /// will be retried either for the specified number of retries or until the data 
+        /// written is successfully verified.  If the specified number of retries are 
+        /// performed without successfully verifying the written data, the write 
+        /// operation is considered to have failed and the tag-access operation-
+        /// response packet will indicate the error.  This value must be between 0 
+        /// and 31, inclusive. 
+        /// If verify is non-zero, this parameter is ignored.
         /// </summary>
-        public UInt32 accessPassword;
+        public uint retryCount = 31;
         /// <summary>
-        /// Number of retrial will retry if write failure
+        /// Starting offset
         /// </summary>
-        public UInt32 retryCount;
+        public ushort offset;
         /// <summary>
-        /// The offset, in the memory bank, of the first 16-bit word to write.
+        /// Total number of words written to user memory
         /// </summary>
-        public UInt16 offset;
+        public ushort count;
         /// <summary>
-        /// The number of 16-bit words that will be written.  
-        /// </summary>                                       
-        public UInt16 count;
-        /// <summary>
-        /// A array to the 16-bit values to write to the tag's memory bank.
+        /// Write Buffer data to target tag
         /// </summary>
-        public UInt16[] pData = new UInt16[0];
+        public UInt16[] data = new UInt16[0];
         /// <summary>
-        /// Constructor
+        /// Target Memory Bank
         /// </summary>
-        public TagWriteUserParms()
-        {
-            // NOP
-        }
+        public MemoryBank bank = MemoryBank.UNKNOWN;
+        /// <summary>
+        /// Target Access Password
+        /// </summary>
+        public uint accessPassword;
+        /// <summary>
+        /// Flag - Zero or combination of  Select or Post-Match
+        /// </summary>
+        public SelectFlags flags = SelectFlags.SELECT;
     }
-*/
+    
+    /*
+     * /// <summary>
+        /// Write User structures, configure this before write new user data
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public class TagWriteUserParms
+        {
+            /// <summary>
+            /// The access password for the tags.  A value of zero indicates no 
+            /// access password. 
+            /// </summary>
+            public UInt32 accessPassword;
+            /// <summary>
+            /// Number of retrial will retry if write failure
+            /// </summary>
+            public UInt32 retryCount;
+            /// <summary>
+            /// The offset, in the memory bank, of the first 16-bit word to write.
+            /// </summary>
+            public UInt16 offset;
+            /// <summary>
+            /// The number of 16-bit words that will be written.  
+            /// </summary>                                       
+            public UInt16 count;
+            /// <summary>
+            /// A array to the 16-bit values to write to the tag's memory bank.
+            /// </summary>
+            public UInt16[] pData = new UInt16[0];
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            public TagWriteUserParms()
+            {
+                // NOP
+            }
+        }
+    */
 }
