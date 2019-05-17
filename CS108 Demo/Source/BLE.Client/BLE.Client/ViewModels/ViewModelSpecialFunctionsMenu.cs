@@ -56,7 +56,7 @@ namespace BLE.Client.ViewModels
 
         void OnRFMicroButtonClicked()
         {
-            ShowViewModel<ViewModelRFMicroInventory>(new MvxBundle());
+            ShowViewModel<ViewModelRFMicroSetting>(new MvxBundle());
         }
 
     }

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
+             x:Class="BLE.Client.Pages.PageRFMicroSetting"
+                Title="Axzon Configuration">
+
+  <ScrollView>
+    <StackLayout Padding="10, 10, 10, 0">
+
+      <Button x:Name="buttonTagType" Text ="Magnus S3" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonTagTypeClicked" />
+
+      <Button x:Name="buttonSensorType" Text ="{Binding buttonSensorTypeText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonSensorTypeClicked" />
+            
+      <StackLayout Orientation="Horizontal">
+        <Label Text="Min OCRSSI" WidthRequest="100" />
+        <Entry x:Name="entryMinOCRSSI" Text ="{Binding entryMinOCRSSIText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" />
+      </StackLayout>
+
+      <StackLayout Orientation="Horizontal">
+        <Label Text="Max OCRSSI" WidthRequest="100" />
+        <Entry x:Name="entryMaxOCRSSI" Text ="{Binding entryMaxOCRSSIText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" />
+      </StackLayout>
+
+      <Button Text="OK" Font="Large" Command="{Binding OnOKButtonCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="#C3C3C3" TextColor="Black" />
+    
+    </StackLayout>
+  </ScrollView>
+</pages:BasePage>

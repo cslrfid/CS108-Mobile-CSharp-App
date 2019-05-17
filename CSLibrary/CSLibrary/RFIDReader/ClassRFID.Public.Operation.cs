@@ -150,12 +150,16 @@ namespace CSLibrary
                     TagKillThreadProc();
                     break;
 
-                case Operation.TAG_UNTRACEABLE:
-                    TagUntraceableThreadProc();
+                case Operation.TAG_AUTHENTICATE:
+                    TagAuthenticateThreadProc();
                     break;
 
                 case Operation.TAG_READBUFFER:
                     TagReadBufferThreadProc();
+                    break;
+
+                case Operation.TAG_UNTRACEABLE:
+                    TagUntraceableThreadProc();
                     break;
 
                 default:

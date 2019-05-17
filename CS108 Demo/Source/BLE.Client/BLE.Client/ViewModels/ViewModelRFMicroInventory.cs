@@ -21,26 +21,43 @@ namespace BLE.Client.ViewModels
 {
     public class ViewModelRFMicroInventory : BaseViewModel
 	{
-		private readonly IUserDialogs _userDialogs;
+        public class RFMicroTagInfoViewModel : BindableBase
+        {
+            private string _EPC;
+            public string EPC { get { return this._EPC; } set { this.SetProperty(ref this._EPC, value); } }
+
+            private uint _OCRSSI;
+            public uint OCRSSI { get { return this._OCRSSI; } set { this.SetProperty(ref this._OCRSSI, value); } }
+
+            private string _GOODOCRSSI;
+            public string GOODOCRSSI { get { return this._GOODOCRSSI; } set { this.SetProperty(ref this._GOODOCRSSI, value); } }
+
+            public double _sensorValueSum;
+            private string _sensorAvgValue;
+            public string SensorAvgValue { get { return this._sensorAvgValue; } set { this.SetProperty(ref this._sensorAvgValue, value); } }
+
+            private uint _sucessCount;
+            public uint SucessCount { get { return this._sucessCount; } set { this.SetProperty(ref this._sucessCount, value); } }
+
+            private string _RSSIColor;
+            public string RSSIColor { get { return this._RSSIColor; } set { this.SetProperty(ref this._RSSIColor, value); } }
+
+            public RFMicroTagInfoViewModel()
+            {
+            }
+        }
+
+        private readonly IUserDialogs _userDialogs;
 
 		#region -------------- RFID inventory -----------------
 
 		public ICommand OnStartInventoryButtonCommand { protected set; get; }
         public ICommand OnClearButtonCommand { protected set; get; }
 
-        private ObservableCollection<TagInfoViewModel> _TagInfoList = new ObservableCollection<TagInfoViewModel>();
-		public ObservableCollection<TagInfoViewModel> TagInfoList { get { return _TagInfoList; } set { SetProperty(ref _TagInfoList, value); } }
+        private ObservableCollection<RFMicroTagInfoViewModel> _TagInfoList = new ObservableCollection<RFMicroTagInfoViewModel>();
+		public ObservableCollection<RFMicroTagInfoViewModel> TagInfoList { get { return _TagInfoList; } set { SetProperty(ref _TagInfoList, value); } }
 
-		public int tagsCount = 0;
-        bool _newTag = false;
-        int _tagCountForAlert = 0;
-        bool _newTagFound = false;
-
-        public bool _startInventory = true;
-
-        private bool _switchRSSI_TempToggled = false;
-        public bool switchRSSI_TempToggled { get { return _switchRSSI_TempToggled; } set { _switchRSSI_TempToggled = value;  } }
-        public string Col2Label { get { return _switchRSSI_TempToggled ? "Temp" : "OC RSSI"; } }
+        public string SensorValueTitle { get { return BleMvxApplication._sensorValueType == 0 ? "SC" : "Temp"; } }
 
         private string _startInventoryButtonText = "Start Inventory";
         public string startInventoryButtonText { get { return _startInventoryButtonText; } }
@@ -56,6 +73,12 @@ namespace BLE.Client.ViewModels
 
 		private int _ListViewRowHeight = -1;
 		public int ListViewRowHeight { get { return _ListViewRowHeight; } set { _ListViewRowHeight = value; } }
+
+        public bool _startInventory = true;
+
+        public int tagsCount = 0;
+        int _tagCountForAlert = 0;
+        bool _newTagFound = false;
 
         DateTime InventoryStartTime;
         private double _InventoryTime = 0;
@@ -77,7 +100,7 @@ namespace BLE.Client.ViewModels
             OnStartInventoryButtonCommand = new Command(StartInventoryClick);
             OnClearButtonCommand = new Command(ClearClick);
 
-            RaisePropertyChanged(() => switchRSSI_TempToggled);
+            RaisePropertyChanged(() => SensorValueTitle);
         }
 
         ~ViewModelRFMicroInventory()
@@ -140,12 +163,11 @@ namespace BLE.Client.ViewModels
         }
 
         //private TagInfoViewModel _ItemSelected;
-        public TagInfoViewModel objItemSelected
+        public RFMicroTagInfoViewModel objItemSelected
         {
             set
             {
                 BleMvxApplication._SELECT_EPC = value.EPC;
-                BleMvxApplication._SELECT_PC = value.PC;
                 ShowViewModel<ViewModelRFMicroReadTemp>(new MvxBundle());
             }
         }
@@ -196,9 +218,15 @@ namespace BLE.Client.ViewModels
                 extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.TID, 0, 28, new byte[] { 0xe2, 0x82, 0x40, 0x30 });
                 BleMvxApplication._reader.rfid.SetSelectCriteria(0, extraSlecetion);
 
+                // OC RSSI
                 extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.NOTHING_DSLINVB, 0);
                 extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xd0, 8, new byte[] { 0x20 });
                 BleMvxApplication._reader.rfid.SetSelectCriteria(1, extraSlecetion);
+
+                // Temperature and Sensor code
+                extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.NOTHING_DSLINVB, 0);
+                extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xe0, 0, new byte[] { 0x00 });
+                BleMvxApplication._reader.rfid.SetSelectCriteria(2, extraSlecetion);
 
                 BleMvxApplication._reader.rfid.Options.TagRanging.flags |= CSLibrary.Constants.SelectFlags.SELECT;
             }
@@ -206,8 +234,8 @@ namespace BLE.Client.ViewModels
             // Multi bank inventory
             BleMvxApplication._reader.rfid.Options.TagRanging.multibanks = 2;
             BleMvxApplication._reader.rfid.Options.TagRanging.bank1 = CSLibrary.Constants.MemoryBank.BANK0;
-            BleMvxApplication._reader.rfid.Options.TagRanging.offset1 = 13;
-            BleMvxApplication._reader.rfid.Options.TagRanging.count1 = 2;
+            BleMvxApplication._reader.rfid.Options.TagRanging.offset1 = 12;
+            BleMvxApplication._reader.rfid.Options.TagRanging.count1 = 3;
             BleMvxApplication._reader.rfid.Options.TagRanging.bank2 = CSLibrary.Constants.MemoryBank.USER;
             BleMvxApplication._reader.rfid.Options.TagRanging.offset2 = 8;
             BleMvxApplication._reader.rfid.Options.TagRanging.count2 = 4;
@@ -230,28 +258,8 @@ namespace BLE.Client.ViewModels
                 _startInventoryButtonText = "Stop Inventory";
             }
 
-            _ListViewRowHeight = 40 + (int)(BleMvxApplication._reader.rfid.Options.TagRanging.multibanks * 10);
-            RaisePropertyChanged(() => ListViewRowHeight);
-
-            // Set second column type
-            {
-                CSLibrary.Structures.SelectCriterion extraSlecetion = new CSLibrary.Structures.SelectCriterion();
-
-                RaisePropertyChanged(() => switchRSSI_TempToggled);
-                RaisePropertyChanged(() => Col2Label);
-
-                // Temp
-                extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.ASLINVA_DSLINVB, 0);
-                extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xe0, 0, new byte[] { 0x00 });
-                BleMvxApplication._reader.rfid.SetSelectCriteria(1, extraSlecetion);
-
-                // OC RSSI
-                extraSlecetion.action = new CSLibrary.Structures.SelectAction(CSLibrary.Constants.Target.SELECTED, CSLibrary.Constants.Action.NOTHING_DSLINVB, 0);
-                extraSlecetion.mask = new CSLibrary.Structures.SelectMask(CSLibrary.Constants.MemoryBank.BANK3, 0xd0, 8, new byte[] { 0x20 });
-                BleMvxApplication._reader.rfid.SetSelectCriteria(2, extraSlecetion);
-            }
-
-
+            //_ListViewRowHeight = 40 + (int)(BleMvxApplication._reader.rfid.Options.TagRanging.multibanks * 10);
+            //RaisePropertyChanged(() => ListViewRowHeight);
 
             InventoryStartTime = DateTime.Now;
             BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_EXERANGING);
@@ -381,14 +389,44 @@ namespace BLE.Client.ViewModels
 
                 lock (TagInfoList)
                 {
+                    UInt16 ocRSSI = info.Bank1Data[1];
+                    UInt16 sensorCode = info.Bank1Data[0];
+                    UInt16 temp = info.Bank1Data[2];
+
                     for (cnt = 0; cnt < TagInfoList.Count; cnt++)
                     {
                         if (TagInfoList[cnt].EPC == info.epc.ToString())
                         {
-                            TagInfoList[cnt].Bank1Data = info.Bank1Data[0].ToString();
+                            TagInfoList[cnt].OCRSSI = ocRSSI;
+                            TagInfoList[cnt].RSSIColor = "Black";
+
+                            if (ocRSSI >= BleMvxApplication._minOCRSSI && ocRSSI <= BleMvxApplication._maxOCRSSI)
                             {
-                                UInt64 caldata = (UInt64)(((UInt64)info.Bank2Data[0] << 48) | ((UInt64)info.Bank2Data[1] << 32) | ((UInt64)info.Bank2Data[2] << 16) | ((UInt64)info.Bank2Data[3]));
-                                TagInfoList[cnt].Bank2Data = Math.Round(getTemperatue(info.Bank1Data[1], caldata), 2).ToString();
+                                TagInfoList[cnt].GOODOCRSSI = ocRSSI.ToString();
+
+                                if (BleMvxApplication._sensorValueType == 0)
+                                {
+                                    if (sensorCode >= 5 && sensorCode <= 490)
+                                    {
+                                        TagInfoList[cnt].SucessCount++;
+                                        TagInfoList[cnt]._sensorValueSum += sensorCode;
+                                        TagInfoList[cnt].SensorAvgValue = Math.Round(TagInfoList[cnt]._sensorValueSum / TagInfoList[cnt].SucessCount, 2).ToString();
+                                    }
+                                }
+                                else
+                                {
+                                    if (temp >= 1300 && temp <= 3500)
+                                    {
+                                        TagInfoList[cnt].SucessCount++;
+                                        UInt64 caldata = (UInt64)(((UInt64)info.Bank2Data[0] << 48) | ((UInt64)info.Bank2Data[1] << 32) | ((UInt64)info.Bank2Data[2] << 16) | ((UInt64)info.Bank2Data[3]));
+                                        TagInfoList[cnt]._sensorValueSum += getTemperatue(info.Bank1Data[2], caldata);
+                                        TagInfoList[cnt].SensorAvgValue = Math.Round(TagInfoList[cnt]._sensorValueSum / TagInfoList[cnt].SucessCount, 2).ToString();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                TagInfoList[cnt].RSSIColor = "Red";
                             }
 
                             found = true;
@@ -398,13 +436,43 @@ namespace BLE.Client.ViewModels
 
                     if (!found)
                     {
-                        TagInfoViewModel item = new TagInfoViewModel();
+                        RFMicroTagInfoViewModel item = new RFMicroTagInfoViewModel();
 
                         item.EPC = info.epc.ToString();
-                        item.Bank1Data = info.Bank1Data[0].ToString();
+                        item.OCRSSI = ocRSSI;
+                        item.SucessCount = 0;
+                        item._sensorValueSum = 0;
+                        item.SensorAvgValue = "";
+                        item.GOODOCRSSI = "";
+                        item.RSSIColor = "Black";
+
+                        if (ocRSSI >= BleMvxApplication._minOCRSSI && ocRSSI <= BleMvxApplication._maxOCRSSI)
                         {
-                            UInt64 caldata = (UInt64)(((UInt64)info.Bank2Data[0] << 48) | ((UInt64)info.Bank2Data[1] << 32) | ((UInt64)info.Bank2Data[2] << 16) | ((UInt64)info.Bank2Data[3]));
-                            item.Bank2Data = Math.Round(getTemperatue(info.Bank1Data[1], caldata), 2).ToString();
+                            item.GOODOCRSSI = ocRSSI.ToString();
+
+                            if (BleMvxApplication._sensorValueType == 0)
+                            {
+                                if (sensorCode >= 5 && sensorCode <= 490)
+                                {
+                                    item.SucessCount++;
+                                    item._sensorValueSum = sensorCode;
+                                    item.SensorAvgValue = item._sensorValueSum.ToString();
+                                }
+                            }
+                            else
+                            {
+                                if (temp >= 1300 && temp <= 3500)
+                                {
+                                    item.SucessCount++;
+                                    UInt64 caldata = (UInt64)(((UInt64)info.Bank2Data[0] << 48) | ((UInt64)info.Bank2Data[1] << 32) | ((UInt64)info.Bank2Data[2] << 16) | ((UInt64)info.Bank2Data[3]));
+                                    item._sensorValueSum = getTemperatue(info.Bank1Data[2], caldata);
+                                    item.SensorAvgValue = Math.Round(item._sensorValueSum, 2).ToString();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            item.RSSIColor = "Red";
                         }
 
                         TagInfoList.Insert(0, item);
@@ -412,8 +480,6 @@ namespace BLE.Client.ViewModels
                         _newTagFound = true;
 
                         Trace.Message("EPC Data = {0}", item.EPC);
-
-                        _newTag = true;
                     }
                 }
             });

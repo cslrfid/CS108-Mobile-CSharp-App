@@ -22,9 +22,12 @@ namespace BLE.Client.ViewModels
 
         public string entrySelectedEPC { get; set; }
         public string entrySelectedPWD { get; set; }
+        public string entryChallenge { get; set; }
+        public string entryResponse { get; set; }
         public string entrySelectedKey0 { get; set; }       // 128 bits
         public string entrySelectedKey1 { get; set; }       // 16 bits
 
+        public string labelResponseStatus { get; set; } = "";
         public string labelKey0Status { get; set; } = "";
         public string labelKey1Status { get; set; } = "";
 
@@ -35,8 +38,8 @@ namespace BLE.Client.ViewModels
         public ICommand OnUnhideButtonCommand { protected set; get; }
         public ICommand OnActivateKey0ButtonCommand { protected set; get; }
         public ICommand OnActivateKey1ButtonCommand { protected set; get; }
-        public ICommand OnAuthenticateTAM0ButtonCommand { protected set; get; }
         public ICommand OnAuthenticateTAM1ButtonCommand { protected set; get; }
+        public ICommand OnAuthenticateTAM2ButtonCommand { protected set; get; }
 
         uint accessPwd;
 
@@ -64,8 +67,8 @@ namespace BLE.Client.ViewModels
             OnUnhideButtonCommand = new Command(OnUnhideButtonButtonClick);
             OnActivateKey0ButtonCommand = new Command(OnActivateKey0ButtonButtonClick);
             OnActivateKey1ButtonCommand = new Command(OnActivateKey1ButtonButtonClick);
-            OnAuthenticateTAM0ButtonCommand = new Command(OnAuthenticateTAM0ButtonButtonClick);
             OnAuthenticateTAM1ButtonCommand = new Command(OnAuthenticateTAM1ButtonButtonClick);
+            OnAuthenticateTAM2ButtonCommand = new Command(OnAuthenticateTAM2ButtonButtonClick);
         }
 
         public override void Resume()
@@ -86,11 +89,13 @@ namespace BLE.Client.ViewModels
 
             entrySelectedEPC = BleMvxApplication._SELECT_EPC;
             entrySelectedPWD = "00000000";
+            entryChallenge = "FD5D8048F48DD09AAD22";
             entrySelectedKey0 = "";
             entrySelectedKey1 = "";
 
             RaisePropertyChanged(() => entrySelectedEPC);
             RaisePropertyChanged(() => entrySelectedPWD);
+            RaisePropertyChanged(() => entryChallenge);
             RaisePropertyChanged(() => entrySelectedKey0);
             RaisePropertyChanged(() => entrySelectedKey1);
 
@@ -160,6 +165,8 @@ namespace BLE.Client.ViewModels
         {
             _currentOperation = CURRENTOPERATION.ACTIVEKEY0;
 
+            TagSelected();
+
             labelKey0Status = "A";
             RaisePropertyChanged(() => labelKey0Status);
 
@@ -175,6 +182,8 @@ namespace BLE.Client.ViewModels
         {
             _currentOperation = CURRENTOPERATION.ACTIVEKEY1;
 
+            TagSelected();
+
             labelKey1Status = "A";
             RaisePropertyChanged(() => labelKey1Status);
 
@@ -186,14 +195,26 @@ namespace BLE.Client.ViewModels
             BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_WRITE_USER);
         }
 
-        void OnAuthenticateTAM0ButtonButtonClick()
-        {
-
-        }
-
         void OnAuthenticateTAM1ButtonButtonClick()
         {
+            TagSelected();
 
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.SenRep = CSLibrary.Structures.SENREP.SEND;
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.IncRepLen = CSLibrary.Structures.INCREPLEN.INCLUDE;
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.Length = 0x60;
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.Message = "0000" + entryChallenge;
+            BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_AUTHENTICATE);
+        }
+
+        void OnAuthenticateTAM2ButtonButtonClick()
+        {
+            TagSelected();
+
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.SenRep = CSLibrary.Structures.SENREP.SEND;
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.IncRepLen = CSLibrary.Structures.INCREPLEN.INCLUDE;
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.Length = 0x78;
+            BleMvxApplication._reader.rfid.Options.TagAuthenticate.Message = "2001" + entryChallenge + "00001100";
+            BleMvxApplication._reader.rfid.StartOperation(CSLibrary.Constants.Operation.TAG_AUTHENTICATE);
         }
 
         void TagSelected()

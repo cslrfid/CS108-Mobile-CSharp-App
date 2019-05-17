@@ -14,19 +14,5 @@ namespace BLE.Client.Pages
 		{
 			InitializeComponent();
 		}
-
-        public async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-		{
-            var answer = await DisplayAlert("Select Tag", "Selected Tag for Read/Write, Geiger and RFMicro search", "OK", "Cancel");
-
-            if (answer)
-            {
-				//BLE.Client.ViewModels.ViewModelInventorynScan.TagInfo Items = (BLE.Client.ViewModels.ViewModelInventorynScan.TagInfo)e.SelectedItem;
-				BLE.Client.ViewModels.TagInfoViewModel Items = (BLE.Client.ViewModels.TagInfoViewModel)e.SelectedItem;
-
-				BleMvxApplication._SELECT_EPC = Items.EPC;
-                BleMvxApplication._SELECT_PC = Items.PC;
-            }
-        }
     }
 }

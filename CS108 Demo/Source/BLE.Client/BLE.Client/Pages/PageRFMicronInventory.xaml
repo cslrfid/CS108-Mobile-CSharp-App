@@ -1,50 +1,52 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
              x:Class="BLE.Client.Pages.PageRFMicroInventory"
-                Title="RFMicro Inventory">
+                Title="Axzon Inventory">
 
-  <StackLayout>
-
+  
+    <StackLayout>
+            
     <ListView x:Name="liewViewTagData" ItemsSource="{Binding TagInfoList}" SelectedItem="{Binding objItemSelected, Mode=TwoWay}" >
+        <ListView.Header>
+          <StackLayout BackgroundColor="#cccccc">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.66*" />
+                <ColumnDefinition Width="0.12*" />
+                <ColumnDefinition Width="0.14*" />
+                <ColumnDefinition Width="0.08*" />
+              </Grid.ColumnDefinitions>
+              <Label Text="EPC" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="Small" VerticalOptions="CenterAndExpand" />
+              <Label Grid.Column="1" Text="OC RSSI" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="Small" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" LineBreakMode="WordWrap"/>
+              <Label Grid.Column="2" Text="{Binding SensorValueTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="Small" VerticalOptions="CenterAndExpand" />
+              <Label Grid.Column="3" Text="#" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="Small" VerticalOptions="CenterAndExpand" />
+            </Grid>
+          </StackLayout>
+        </ListView.Header>
 
-      <ListView.Header>
-        <StackLayout Padding="10,5,0,5" BackgroundColor="#cccccc">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="0.7*" />
-              <ColumnDefinition Width="0.15*" />
-              <ColumnDefinition Width="0.15*" />
-            </Grid.ColumnDefinitions>
-            <Label Text="EPC" VerticalTextAlignment="Center" FontSize="Small" />
-            <Label Grid.Column="1" Text="OC RSSI" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" FontSize="Small" />
-            <Label Grid.Column="2" Text="Temp." VerticalTextAlignment="Center" HorizontalTextAlignment="Start" FontSize="Small" />
-          </Grid>
-        </StackLayout>
-      </ListView.Header>
-
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <ViewCell>
-            <StackLayout Orientation="Vertical">
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="0.7*" />
-                  <ColumnDefinition Width="0.15*" />
-                  <ColumnDefinition Width="0.15*" />
-                </Grid.ColumnDefinitions>
-                <Label Text="{Binding EPC}" VerticalTextAlignment="Center" FontSize="Small" />
-                <Label Grid.Column="1" Text="{Binding Bank1Data}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" />
-                <Label Grid.Column="2" Text="{Binding Bank2Data}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" />
-              </Grid>
-            </StackLayout>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <StackLayout Orientation="Vertical">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="0.66*" />
+                              <ColumnDefinition Width="0.12*" />
+                              <ColumnDefinition Width="0.14*" />
+                              <ColumnDefinition Width="0.08*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding EPC}" VerticalTextAlignment="Start" FontSize="Small" />
+                            <Label Grid.Column="1" Text="{Binding OCRSSI}" VerticalTextAlignment="Start" HorizontalTextAlignment="Center"  TextColor="{Binding RSSIColor}"/>
+                            <Label Grid.Column="2" Text="{Binding SensorAvgValue}" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                            <Label Grid.Column="3" Text="{Binding SucessCount}" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" />
+                        </Grid>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
     </ListView>
-
+    
     <StackLayout Orientation="Vertical" VerticalOptions="EndAndExpand" >
 
       <Button Text= "{Binding startInventoryButtonText}" Font="Large" Command="{Binding OnStartInventoryButtonCommand}" />
