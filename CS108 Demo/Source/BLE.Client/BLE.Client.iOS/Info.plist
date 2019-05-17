@@ -25,7 +25,7 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.15</string>
+	<string>2.0.18</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Only for testing, we don&apos;t need the data to do anything</string>
 	<key>UIApplicationExitsOnSuspend</key>
@@ -54,6 +54,8 @@
 		<true/>
 	</dict>
 	<key>CFBundleVersion</key>
-	<string>163</string>
+	<string>174</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The Program reads the RFID tag ID and couples that with the location of the reader and then send this to the cloud server so that the location of the RFID tag ID is de facto reported and saved in Cloud Server</string>
 </dict>
 </plist>

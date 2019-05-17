@@ -869,9 +869,9 @@ namespace CSLibrary
             MacWriteRegister(MACREGISTER.AUTHENTICATE_MSG2, m_data[2]);
             MacWriteRegister(MACREGISTER.AUTHENTICATE_MSG3, m_data[3]);
 
-            Start18K6CRequest(0, CSLibrary.Constants.SelectFlags.SELECT);
+            Start18K6CRequest(1, CSLibrary.Constants.SelectFlags.SELECT);
 
-            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.AUTHENTICATE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
+            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.AUTHENTICATE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE, (UInt32)CurrentOperation);
             m_Result = Result.OK;
             return;
         }
@@ -881,7 +881,7 @@ namespace CSLibrary
             MacWriteRegister(MACREGISTER.READBUFFER_PTR, m_rdr_opt_parms.TagReadBuffer.Offset);
             MacWriteRegister(MACREGISTER.READBUFFER_LEN, (UInt32)(m_rdr_opt_parms.TagReadBuffer.Length & 0xfff));
 
-            Start18K6CRequest(0, CSLibrary.Constants.SelectFlags.SELECT);
+            Start18K6CRequest(1, CSLibrary.Constants.SelectFlags.SELECT);
 
             _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.READBUFFER), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
             m_Result = Result.OK;
@@ -907,10 +907,10 @@ namespace CSLibrary
 
             MacWriteRegister( MACREGISTER.UNTRACEABLE_CFG, value);
 
-            Start18K6CRequest(0, CSLibrary.Constants.SelectFlags.SELECT);
+            Start18K6CRequest(1, CSLibrary.Constants.SelectFlags.SELECT);
 
             // Issue the untraceable command
-            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.UNTRACEABLE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE);
+            _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.UNTRACEABLE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE, (UInt32)CurrentOperation);
             m_Result = Result.OK;
             return;
         }

@@ -138,6 +138,10 @@ namespace CSLibrary
                     TagWriteUsrMemThreadProc();
                     break;
 
+                case Operation.TAG_BLOCK_WRITE:
+                    BlockWriteThreadProc();
+                    break;
+
                 case Operation.TAG_LOCK:
                     TagLockThreadProc();
                     break;

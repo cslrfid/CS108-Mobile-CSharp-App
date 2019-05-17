@@ -4,26 +4,56 @@
              xmlns:pages="clr-namespace:BLE.Client.Pages;assembly=BLE.Client"
              x:Class="BLE.Client.Pages.PageRFMicroSetting"
                 Title="Axzon Configuration">
-
-  <ScrollView>
-    <StackLayout Padding="10, 10, 10, 0">
-
-      <Button x:Name="buttonTagType" Text ="Magnus S3" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonTagTypeClicked" />
-
-      <Button x:Name="buttonSensorType" Text ="{Binding buttonSensorTypeText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonSensorTypeClicked" />
-            
-      <StackLayout Orientation="Horizontal">
-        <Label Text="Min OCRSSI" WidthRequest="100" />
-        <Entry x:Name="entryMinOCRSSI" Text ="{Binding entryMinOCRSSIText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" />
-      </StackLayout>
-
-      <StackLayout Orientation="Horizontal">
-        <Label Text="Max OCRSSI" WidthRequest="100" />
-        <Entry x:Name="entryMaxOCRSSI" Text ="{Binding entryMaxOCRSSIText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" />
-      </StackLayout>
-
-      <Button Text="OK" Font="Large" Command="{Binding OnOKButtonCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="#C3C3C3" TextColor="Black" />
+  
+    <ScrollView>
     
-    </StackLayout>
-  </ScrollView>
+        <StackLayout Padding="10, 10, 10, 0">
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Tag Type" WidthRequest="100" VerticalOptions="Center"/>
+                <Button x:Name="buttonTagType" Text ="Magnus S3" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonTagTypeClicked" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Power" WidthRequest="100" VerticalOptions="Center"/>
+                <Button x:Name="buttonPower" Text ="{Binding buttonPowerText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonPowerClicked" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Indicators Profile" WidthRequest="100" VerticalOptions="Center"/>
+                <Button x:Name="buttonIndicatorsProfile" Text ="{Binding buttonIndicatorsProfileText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonIndicatorsProfileClicked" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Sensor Type" WidthRequest="100" VerticalOptions="Center"/>
+                <Button x:Name="buttonSensorType" Text ="{Binding buttonSensorTypeText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonSensorTypeClicked" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Sensor Unit" WidthRequest="100" VerticalOptions="Center"/>
+                <Button x:Name="buttonSensorUnit" Text ="{Binding buttonSensorUnitText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonSensorUnitClicked" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Min OCRSSI" WidthRequest="100" VerticalOptions="Center"/>
+                <Entry x:Name="entryMinOCRSSI" Text ="{Binding entryMinOCRSSIText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Max OCRSSI" WidthRequest="100" VerticalOptions="Center"/>
+                <Entry x:Name="entryMaxOCRSSI" Text ="{Binding entryMaxOCRSSIText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Threshold" WidthRequest="100" VerticalOptions="Center"/>
+                <Button x:Name="buttonThresholdComparison" Text ="{Binding buttonThresholdComparisonText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonThresholdComparisonClicked" />
+                <Entry x:Name="entryThresholdValue" Text ="{Binding entryThresholdValueText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand"  VerticalOptions="Center"/>
+                <Button x:Name="buttonThresholdColor" Text ="{Binding buttonThresholdColorText, Mode=OneWayToSource }" HorizontalOptions="FillAndExpand" BorderWidth ="1" Clicked="buttonThresholdColorClicked" />
+            </StackLayout>
+
+            <Button Text=" Tag NickName(View Only) " Command="{Binding OnNicknameButtonCommand}" HorizontalOptions="End" BackgroundColor="#C3C3C3" TextColor="Black" />
+            <Button x:Name="buttonOK" Text="OK" Font="Large" Clicked="ButtonOK_Clicked" HorizontalOptions="FillAndExpand" BackgroundColor="#C3C3C3" TextColor="Black"/>
+
+        </StackLayout>
+    </ScrollView>
 </pages:BasePage>

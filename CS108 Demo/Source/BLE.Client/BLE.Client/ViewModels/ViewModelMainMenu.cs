@@ -413,6 +413,7 @@ namespace BLE.Client.ViewModels
 
             // for Geiger and Read/Write
             BleMvxApplication._SELECT_EPC = "";
+            //BleMvxApplication._SELECT_EPC = "E280115020001144766E1800"; // for testing
             BleMvxApplication._SELECT_PC = 3000;
 
             // for PreFilter

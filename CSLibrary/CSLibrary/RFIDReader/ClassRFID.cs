@@ -528,6 +528,18 @@ namespace CSLibrary
                         case CSLibrary.Constants.Operation.TAG_READ_USER:
                             ArrayCopy(recvData, offset + 20, m_rdr_opt_parms.TagReadUser.m_pData, 0, m_rdr_opt_parms.TagReadUser.count * 2);
                             break;
+
+                        case CSLibrary.Constants.Operation.TAG_AUTHENTICATE:
+                            {
+                                int pkt_len = recvData[5] << 8 | recvData[4];
+                                int flags = recvData[1];
+                                int len = ((pkt_len - 3) * 4) - ((flags >> 6) & 3);
+                                byte[] response = new byte[len];
+                                Array.Copy(recvData, offset + 20, response, 0, len);
+                                m_rdr_opt_parms.TagAuthenticate.pData = new S_DATA(response);
+                                //Array.Copy(recvData, offset + 20, m_rdr_opt_parms.TagAuthenticate.pData, 0, len);
+                            }
+                            break;
                     }
                     break;
 
@@ -577,10 +589,13 @@ namespace CSLibrary
 							*/
 					break;
 
+                case 0xc7:  // Block Write
+                    break;
+
                 case 0x04:  // EAS
                     break;
 
-                case 0x00: // Untraceable?
+                case 0xe2: // Untraceable
                     break;
 
                 default:
@@ -863,6 +878,28 @@ namespace CSLibrary
                                                 }
                                                 break;
 
+                                            case CSLibrary.Constants.Operation.TAG_AUTHENTICATE:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.UNKNOWN,
+                                                        TagAccess.AUTHENTICATE,
+                                                        m_rdr_opt_parms.TagAuthenticate.pData));
+                                                }
+                                                break;
+
+                                            case CSLibrary.Constants.Operation.TAG_UNTRACEABLE:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.UNKNOWN,
+                                                        TagAccess.UNTRACEABLE,
+                                                        m_rdr_opt_parms.TagAuthenticate.pData));
+                                                }
+                                                break;
+
                                             case CSLibrary.Constants.Operation.TAG_WRITE:
                                                 {
                                                     FireAccessCompletedEvent(
@@ -929,6 +966,17 @@ namespace CSLibrary
                                                 }
                                                 break;
 
+                                            case CSLibrary.Constants.Operation.TAG_BLOCK_WRITE:
+                                                {
+                                                    FireAccessCompletedEvent(
+                                                        new OnAccessCompletedEventArgs(
+                                                        (((currentCommandResponse | result) & HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.DATA1) != 0),
+                                                        Bank.SPECIFIC,
+                                                        CSLibrary.Constants.TagAccess.WRITE,
+                                                        m_rdr_opt_parms.TagReadUser.pData));
+                                                }
+                                                break;
+
                                             case CSLibrary.Constants.Operation.TAG_LOCK:
                                                 {
                                                     CSLibrary.Debug.WriteLine("Tag lock end {0}", currentCommandResponse);
@@ -941,7 +989,7 @@ namespace CSLibrary
                                                         null));
                                                 }
                                                 break;
-
+/*
                                             case CSLibrary.Constants.Operation.TAG_UNTRACEABLE:
                                                 {
                                                     CSLibrary.Debug.WriteLine("Tag untraceable end {0}", currentCommandResponse);
@@ -954,7 +1002,7 @@ namespace CSLibrary
                                                         null));
                                                 }
                                                 break;
-
+                                                */
                                         }
                                     }
 

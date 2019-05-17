@@ -184,14 +184,32 @@ namespace BLE.Client
         public static bool _batteryLow = false;
 
         // for RFMicro
-        public static int _sensorValueType = 0; // 0 = Temp, 1 = Sensor Code
-        public static uint _minOCRSSI = 0;
-        public static uint _maxOCRSSI = 0;
+        public static int _rfMicro_Power; // 0 ~ 4
+        public static int _rfMicro_SensorType; // 0=Sensor code, 1=Temperature
+        public static int _rfMicro_SensorUnit; // 0=code, 1=f, 2=c, 3=%
+        public static int _rfMicro_minOCRSSI;
+        public static int _rfMicro_maxOCRSSI;
+        public static int _rfMicro_thresholdComparison; // 0 ~ 1
+        public static int _rfMicro_thresholdValue;    
+        public static string _rfMicro_thresholdColor;
 
         public override void Initialize()
         {
+            RFMicroTagNicknameViewModel item;
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000417"; item.Nickname = "Test Tag 1"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000001"; item.Nickname = "Motor 1"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000002"; item.Nickname = "Motor 2"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000003"; item.Nickname = "Motor 3"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000004"; item.Nickname = "Milk 1"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000005"; item.Nickname = "Milk 2"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000006"; item.Nickname = "Milk 3"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000007"; item.Nickname = "Diaper 1"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000008"; item.Nickname = "Diaper 2"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+            item = new RFMicroTagNicknameViewModel(); item.EPC = "000000000000000000000009"; item.Nickname = "Diaper 3"; ViewModelRFMicroNickname._TagNicknameList.Add(item);
+
             RegisterAppStart<ViewModelMainMenu>();
             //RegisterAppStart<DeviceListViewModel>();
+
         }
 
         //static async public void LoadConfig(string readerID)

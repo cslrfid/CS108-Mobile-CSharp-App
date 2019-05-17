@@ -336,5 +336,100 @@ namespace CSLibrary
                 FireStateChangedEvent(RFState.IDLE);
 */            }
         }
+
+        private void BlockWriteThreadProc()
+        {
+            if (m_rdr_opt_parms.TagBlockWrite.retryCount > 31)
+            {
+                m_Result = Constants.Result.INVALID_PARAMETER;
+                return;
+            }
+
+            if (m_rdr_opt_parms.TagBlockWrite.count > 255)
+            {
+                m_Result = Constants.Result.INVALID_PARAMETER;
+                return;
+            }
+
+            try
+            {
+                FireStateChangedEvent(CSLibrary.Constants.RFState.BUSY);
+
+                m_Result = CSLibrary.Constants.Result.FAILURE;
+
+                MacWriteRegister(MACREGISTER.HST_TAGACC_ACCPWD, m_rdr_opt_parms.TagBlockWrite.accessPassword);
+                Start18K6CRequest(1, m_rdr_opt_parms.TagBlockWrite.flags);
+                MacWriteRegister(MACREGISTER.HST_TAGACC_DESC_CFG, 0x01 | (m_rdr_opt_parms.TagBlockWrite.retryCount << 1)); // Enable write verify and set retry count
+
+                // Set up the tag bank register (tells where to write the data)
+                MacWriteRegister(MACREGISTER.HST_TAGACC_BANK, (uint)m_rdr_opt_parms.TagBlockWrite.bank);
+
+                // Set the offset
+                MacWriteRegister(MACREGISTER.HST_TAGACC_PTR, m_rdr_opt_parms.TagBlockWrite.offset);
+
+                // Set up the access count register (i.e., number of words to write)
+                MacWriteRegister(MACREGISTER.HST_TAGACC_CNT, m_rdr_opt_parms.TagBlockWrite.count);
+
+                ushort DataSize = m_rdr_opt_parms.TagBlockWrite.count;
+                ushort WriteSize = DataSize;
+                // Write the values to the bank until either the bank is full or we run out of data
+                ushort registerAddress = (UInt16)MACREGISTER.HST_TAGWRDAT_0;
+                UInt32 registerBank = 0;
+                int pcnt = 0;
+
+                // Set up the HST_TAGWRDAT_N registers.  Fill up a bank at a time.
+                for (registerBank = 0; DataSize > 0; registerBank++)
+                {
+                    // Indicate which bank of tag write registers we are going to fill
+                    MacWriteRegister(MACREGISTER.HST_TAGWRDAT_SEL, registerBank);
+
+                    // Write the values to the bank until either the bank is full or we run out of data
+                    registerAddress = (UInt16)MACREGISTER.HST_TAGWRDAT_0;
+
+                    Debug.WriteLine("1. datasize:" + DataSize + " writesieze:" + WriteSize);
+                    if (DataSize >= 32)
+                    {
+                        WriteSize = 32;
+                        DataSize -= 32;
+                    }
+                    else
+                    {
+                        WriteSize = DataSize;
+                        DataSize = 0;
+                    }
+                    Debug.WriteLine("2. datasize:" + DataSize + " writesieze:" + WriteSize);
+
+                    while (WriteSize > 1)
+                    {
+                        // Set up the register and then write it to the MAC
+                        UInt32 registerValue = (UInt32)((UInt32)m_rdr_opt_parms.TagBlockWrite.data[pcnt + 1] | (((UInt32)m_rdr_opt_parms.TagBlockWrite.data[pcnt]) << 16));
+
+                        MacWriteRegister((MACREGISTER)(registerAddress), registerValue);
+
+                        pcnt += 2;
+                        registerAddress++;
+                        WriteSize -= 2;
+                    }
+
+                    if (WriteSize == 1)
+                    {
+                        // Set up the register and then write it to the MAC
+                        UInt32 registerValue = (uint)((UInt32)m_rdr_opt_parms.TagBlockWrite.data[pcnt] << 16);
+
+                        MacWriteRegister((MACREGISTER)(registerAddress), registerValue);
+                    }
+                }
+
+                _deviceHandler.SendAsync(0, 0, DOWNLINKCMD.RFIDCMD, PacketData(0xf000, (UInt32)HST_CMD.BLOCKWRITE), HighLevelInterface.BTWAITCOMMANDRESPONSETYPE.WAIT_BTAPIRESPONSE_COMMANDENDRESPONSE, (UInt32)CurrentOperation);
+
+                m_Result = CSLibrary.Constants.Result.OK;
+            }
+            catch (System.Exception ex)
+            {
+            }
+            finally
+            {
+            }
+        }
     }
 }
